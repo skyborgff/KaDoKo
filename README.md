@@ -18,3 +18,17 @@ Then
 \>```python run app.py```
 
 It should open a browser window
+
+#Useful links:
+
+Bootstrap components:
+
+https://bootstrap-vue.org/docs/components
+
+Json reade:
+
+https://jsonformatter.curiousconcept.com/
+
+Eel and vue together:
+
+https://github.com/samuelhwilliams/Eel#starting-the-app
