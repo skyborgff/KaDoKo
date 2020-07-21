@@ -63,5 +63,4 @@ eel.start('index.html', mode='None', port=8282, disable_cache=True, close_callba
 
 while True:
     #Main Loop
-    #Main Loop
     eel.sleep(5)

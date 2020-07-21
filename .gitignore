@@ -360,5 +360,6 @@ API/ANIDB/CACHE_ANIDB.json
 API/ANIDB/data_series.json
 API/MAL/CACHE_MAL.json
 API/MAL/MAL_Auth.json
+!vue/**
 
 # End of https://www.toptal.com/developers/gitignore/api/windows,pycharm,python,vue,vuejs,webstorm,web
