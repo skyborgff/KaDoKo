@@ -62,4 +62,5 @@ eel.init('web')  # or the name of your directory
 eel.start('index.html', mode='None', port=8282, disable_cache=True, close_callback=on_websocket_close, block=False)
 
 while True:
+    #Main Loop
     eel.sleep(5)
