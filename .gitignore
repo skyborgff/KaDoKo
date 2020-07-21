@@ -250,21 +250,6 @@ node_modules/
 npm-debug.log
 yarn-error.log
 
-### Web ###
-*.asp
-*.cer
-*.csr
-*.css
-*.htm
-*.html
-*.js
-*.jsp
-*.php
-*.rss
-*.wasm
-*.wat
-*.xhtml
-
 ### WebStorm ###
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio, WebStorm and Rider
 # Reference: https://intellij-support.jetbrains.com/hc/en-us/articles/206544839
@@ -360,6 +345,5 @@ API/ANIDB/CACHE_ANIDB.json
 API/ANIDB/data_series.json
 API/MAL/CACHE_MAL.json
 API/MAL/MAL_Auth.json
-!vue/**
 
 # End of https://www.toptal.com/developers/gitignore/api/windows,pycharm,python,vue,vuejs,webstorm,web
