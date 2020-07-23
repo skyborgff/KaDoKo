@@ -350,3 +350,4 @@ API/MAL/MAL_Auth.json
 
 # End of https://www.toptal.com/developers/gitignore/api/windows,pycharm,python,vue,vuejs,webstorm,web
 
+/MAIN/connections.json
