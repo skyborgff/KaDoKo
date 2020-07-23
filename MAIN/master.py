@@ -77,4 +77,5 @@ class Master():
             json.dump(self.data, file, indent=1)
 
     def get_connections(self):
+        print(self.data)
         return self.data
