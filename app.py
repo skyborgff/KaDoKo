@@ -42,7 +42,7 @@ def MALANIDBConnect():
 def MALAuthCode(code):
     if code == {}:
         return
-    if not mal.active:
+    if not mal.status==True:
         mal.finish_auth(code)
     return str(mal.status==True)
 
