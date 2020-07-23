@@ -5,8 +5,6 @@ import requests
 import difflib
 import time
 from Utils.Cache import Cache
-import gevent.monkey
-gevent.monkey.patch_all()
 import eel
 
 SEARCH_DB = 'API/ANIDB/anime-titles.xml'

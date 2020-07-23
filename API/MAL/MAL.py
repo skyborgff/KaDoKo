@@ -9,8 +9,6 @@ import json
 from .api import *
 from .OAuth import OAuth
 from time import time, sleep
-import gevent.monkey
-gevent.monkey.patch_all()
 import eel
 from Utils.Cache import Cache
 from itertools import groupby

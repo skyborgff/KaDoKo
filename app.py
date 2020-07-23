@@ -1,5 +1,3 @@
-import gevent.monkey
-gevent.monkey.patch_all()
 import eel
 import time
 from MAIN.master import Master
@@ -52,9 +50,7 @@ def GetConnections():
 
 @eel.expose
 def ConnectShows(mid, aid):
-    print('Connecting:')
-    print(mid)
-    print(aid)
+    master.connect_known(mid, aid)
 
 
 master = Master()
