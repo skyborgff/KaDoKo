@@ -9,9 +9,16 @@ import json
 from .api import *
 
 class OAuth:
-    def service(self, auth_file, client_file=None):
+    def __init__(self):
         self.authorize_url = URL_AUTH
         self.access_token_url = URL_TOKEN
+        self.code_verifier = self.code_challenge = ''
+        self.auth_file = ''
+        self.client_id = ''
+        self.token_type = ''
+        self.token = ''
+
+    def service(self, auth_file, client_file=None):
         self.code_verifier = self.code_challenge = secrets.token_urlsafe(100)[:128]
         self.auth_file = auth_file
         if os.path.exists(auth_file):

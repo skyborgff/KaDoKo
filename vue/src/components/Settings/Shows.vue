@@ -21,9 +21,9 @@
                                 </div>
                             </b-form-group>
                             <b-input-group prepend="aniDB Id:" class="mt-3">
-                                <b-form-input v-model="selectedAnime[value['node']['id']]" id="type-number" no-wheel="true" :value="selectedAnime[value['node']['id']]"></b-form-input>
+                                <b-form-input v-model="selectedAnime[value['node']['id']]" type="number" style="max-width: 15%" no-wheel="true" :value="selectedAnime[value['node']['id']]"></b-form-input>
                                 <b-input-group-append>
-                                    <b-button variant="outline-success">Accept</b-button>
+                                    <b-button variant="outline-success" @click="ButtonConnectShows(value['node']['id'], selectedAnime[value['node']['id']])">Accept</b-button>
                                 </b-input-group-append>
                             </b-input-group>
                         </b-card>
@@ -72,6 +72,9 @@ export default {
                     alert('already connected but tried to connect again')
                 }
             })
+        },
+        ButtonConnectShows(mid, aid) {
+            eel.ConnectShows(mid, aid)((val) => {})
         },
         MALConnected() {
             eel.MALConnected()((val) => {
