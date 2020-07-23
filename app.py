@@ -71,7 +71,8 @@ def mal_ani():
     eel.sleep(5)
     mal.user('@me')
     mal.anime_list('@me')
-    master.connect_ids('Total')
+    #master.connect_ids('Total')
+    master.connect_ids('watching')
     eel.sleep(60 * 60 * 3)  # tri-Hourly grab
 
 
