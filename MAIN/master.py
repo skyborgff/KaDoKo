@@ -2,8 +2,6 @@ from API.MAL.MAL import Client as MalClient
 from API.ANIDB.ANIDB import Client as ANIClient
 import os
 import json
-import gevent.monkey
-gevent.monkey.patch_all()
 import eel
 
 DB_FILE = 'MAIN/connections.json'
@@ -23,7 +21,13 @@ class Master():
         return self.mal.status
 
     def connect_known(self, mid, aidb):
-        pass
+        connections = self.get_connections()
+        for anime in connections:
+            if anime['ids']['MAL'] == mid:
+                anime['ids']['AIDB'] = aidb
+                anime['connected'] = 1
+                anime['name_list'] = []
+        self.save_connections()
 
     def get_connection_info(self, id, type='MAL'):
         connections = self.get_connections()
@@ -33,7 +37,6 @@ class Master():
 
     def connect_ids(self, status='watching'):
         self.connections = self.get_connections()
-        self.data = []
         if not self.mal.status==True:
             raise Exception('NOT CONNECTED TO MAL')
 
@@ -46,8 +49,8 @@ class Master():
             connection = self.get_connection_info(mid, type='MAL')
 
             if connection:
-                self.data.append(connection)
                 print('Already Connected')
+                continue
             else:
                 matches = self.anidb.search(mal_title, count=4)
                 if len(matches) > 1:
