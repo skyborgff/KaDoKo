@@ -64,11 +64,12 @@ class Master():
                                   'connected': 1,
                                   'name_list': []}
                     print('Found match: ' + str(aid) + '\nGenerating series')
-                    self.data.append(connection)
+                self.data.append(connection)
                 self.anidb.generate_series(aid)
             self.save_connections()
 
     def save_connections(self):
+        print('Saving connections')
         with open(DB_FILE, 'w') as file:
             json.dump(self.data, file, indent=1)
 
