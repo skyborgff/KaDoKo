@@ -23,6 +23,9 @@ class Cache:
             with open(self._cache_file, 'r', encoding='utf-8') as cache_file:
                 self._cached_data = json.load(cache_file)
         else:
+            path_to_cache = os.path.join(Cache_Folder, Module_Name)
+            if not os.path.exists(path_to_cache):
+                os.makedirs(path_to_cache)
             self._cached_data = {}
 
     # Adds the data to the cache with timestamp and saves it
