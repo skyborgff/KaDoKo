@@ -26,3 +26,4 @@ class AnimeInfo:
                         'Type': Type,
                         'IDs': IDs,
         }
+

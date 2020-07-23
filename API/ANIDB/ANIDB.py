@@ -4,23 +4,37 @@ import os
 import requests
 import difflib
 import time
-from .Cache import Cache
+from Utils.Cache import Cache
+import gevent.monkey
+gevent.monkey.patch_all()
+import eel
 
 SEARCH_DB = 'API/ANIDB/anime-titles.xml'
 SEARCH_DB_JSON = 'API/ANIDB/anime-titles.json'
+DATA_FILE = 'API/ANIDB/data_series.json'
+
 
 class Client:
     def __init__(self):
-        self.cache = Cache(file='API/ANIDB/CACHE_ANIDB.json')
+        self.cache = Cache(Module_Name='Clients/ANIDB', SubModule_Name='info', validity='1M')
         self.DB = self.load_DB()
+        if os.path.exists(DATA_FILE):
+            with open(DATA_FILE) as file:
+                self.data = json.load(file)
+        else:
+            self.data = []
+
+    def convert_DB(self):
+        with open(SEARCH_DB, 'r', encoding='utf8') as xml_file:
+            data_dict = xmltodict.parse(xml_file.read())
+        json_data = json.loads(json.dumps(data_dict))
+        with open(SEARCH_DB_JSON, "w", encoding='utf8') as json_file:
+            json.dump(json_data, json_file, indent=1, ensure_ascii=False)
+        return json_data
 
     def load_DB(self):
         if not os.path.exists(SEARCH_DB_JSON):
-            with open(SEARCH_DB, 'r', encoding='utf8') as xml_file:
-                data_dict = xmltodict.parse(xml_file.read())
-            json_data = json.loads(json.dumps(data_dict))
-            with open(SEARCH_DB_JSON, "w", encoding='utf8') as json_file:
-                json.dump(json_data, json_file, indent=1, ensure_ascii=False)
+            json_data = self.convert_DB()
         else:
             with open(SEARCH_DB_JSON, encoding='utf8') as json_file:
                 json_data = json.load(json_file, encoding='utf8')
@@ -32,10 +46,10 @@ class Client:
         elif isinstance(data, dict):
             return [data]
 
-    def search(self, string):
+    def search(self, string, count=4):
         string = string
         titles_list = []
-        for anime in self.DB['animetitles']['anime']:
+        for anime in reversed(self.DB['animetitles']['anime']):
             titles = self.array(anime['title'])
             anime_titles = []
             for title in titles:
@@ -43,7 +57,7 @@ class Client:
             closest_title = difflib.get_close_matches(string, anime_titles, n=1)
             if len(closest_title) != 0:
                 titles_list.append(closest_title[0])
-        closest = difflib.get_close_matches(string, titles_list, n=4)
+        closest = difflib.get_close_matches(string, titles_list, n=count)
         if closest[0].lower() == string.lower():
             # if direct match just give that one
             closest = [closest[0]]
@@ -56,53 +70,56 @@ class Client:
                     name = title['#text']
                     if name == anime_name:
                         aid = anime['@aid']
-                        return aid
+                        return int(aid)
 
     def get_info(self, aid):
-        print(aid)
+        print('asking ANIDB for: ' + str(aid))
         if self.cache.valid(aid):
+            print('cached')
             return self.cache.get(aid)
         else:
             print('asking API')
-            time.sleep(3)
+            eel.sleep(3)
             anime_url = 'http://api.anidb.net:9001/httpapi?request=anime&client={client}&clientver={ver}&protover=1&aid={id}'
             url = anime_url.format(client='plexanidbsynchtt', ver='2', id=aid)
             result = requests.get(url)
             parsed = xmltodict.parse(result.content)
             data = json.loads(json.dumps(parsed))
             print(data)
-            data = data['anime']
-            self.cache.save(aid, data)
+            try:
+                data = data['anime']
+                self.cache.save(aid, data)
+            except:
+                data = {}
         return data
 
-    def generate_series(self, aid):
+    def save_data(self):
         data_file = 'API/ANIDB/data_series.json'
-        if os.path.exists(data_file):
-            with open(data_file) as file:
-                data = json.load(file)
-        else:
-            data = []
-        for series in data:
+        with open(data_file, 'w') as file:
+            json.dump(self.data, file, indent=1)
+
+    def generate_series(self, aid):
+        print('Generation for ' + str(aid) + ' started')
+
+        for series in self.data:
             if aid in series['ids']:
                 if aid not in series['added']:
                     series['added'].append(aid)
-                    with open(data_file, 'w') as file:
-                        json.dump(data, file, indent=1)
+                    self.save_data()
                 return series
         series_list = []
         series_list.append(self.get_info(aid))
+        print('Prequel start')
         self.add_related(series_list, aid, 'Prequel')
+        print('Sequel start')
         self.add_related(series_list, aid, 'Sequel')
-        #clear duplicates, possible not needed
-        #series_list = list(dict.fromkeys(series_list))
-        series_list.sort(key=lambda x: int(x['@id']))
         id_list = []
         for anime in series_list:
             id_list.append(anime['@id'])
         anime_data = {'data': series_list, "ids": id_list, 'added': [aid]}
-        data.append({'data': series_list, "ids": id_list, 'added': [aid]})
-        with open(data_file, 'w') as file:
-            json.dump(data, file, indent=1)
+        self.data.append(anime_data)
+        self.save_data()
+        print('Generation for ' + str(aid) + ' ended')
         return anime_data
 
     def add_related(self, series_list, aid, relation_type):
