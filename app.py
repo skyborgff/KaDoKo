@@ -87,5 +87,3 @@ while True:
     #Main Loop
     while not (mal.status == True):
         eel.sleep(10)
-
-
