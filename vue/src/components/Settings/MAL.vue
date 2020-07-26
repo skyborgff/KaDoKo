@@ -56,7 +56,8 @@
                                             {{ value['node']['title'] }}
                                         </b-card-text>
                                         <b-button pill :href="'https://myanimelist.net/anime/' + value['node']['id']" size="sm" target="_blank" variant="outline-light">MAL Link</b-button>
-                                        <b-button pill disabled :href="'https://myanimelist.net/anime/' + value['node']['id']" size="sm" target="_blank" variant="outline-light">ANIDB Link</b-button>
+                                        <b-button v-if="GetAIDFromMID(value['node']['id']) != '0'" pill :id="'button-aid-' + type + '-' + value['node']['id']" :href="'https://anidb.net/anime/' + GetAIDFromMID(value['node']['id'])" size="sm" target="_blank" variant="outline-light">ANIDB Link</b-button>
+                                        <b-button v-else pill disabled :id="'button-aid-' + type + '-' + value['node']['id']" :href="'https://anidb.net'" size="sm" target="_blank" variant="outline-light">ANIDB Link</b-button>
                                     </b-card>
                                 </div>
                             </div>
@@ -125,6 +126,7 @@ export default {
         eel.MALConnected()((val) => {
             this.connected = val;
         });
+        this.GetConnections()
         this.MALUserInfo();
         this.MALAnimeInfo();
     },
@@ -187,6 +189,24 @@ export default {
                     }
                 })
             }
+        },
+        GetConnections() {
+            if (this.connected) {
+                eel.GetConnections()((Connections) => {
+                    if (Connections) {
+                        this.Connections = Connections
+                    }
+                })
+            }
+        },
+        GetAIDFromMID(mid) {
+            for (var connection in this.Connections){
+                if (this.Connections[connection]['ids']['MAL'] == mid){
+                    var aid = this.Connections[connection]['ids']['AIDB']
+                    return aid
+                }
+            }
+            return '0'
         },
     },
 }
