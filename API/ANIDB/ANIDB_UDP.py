@@ -52,7 +52,9 @@ class UDP_Client:
 		self.client_version + "&nat=1"
 
 		self.socket.sendto(auth_message.encode("ascii"), self.address)
-		auth_response = self.socket.recv(1024).decode("ascii").split()
+		auth_response = self.socket.recv(1024).decode("ascii")
+		print("AUTH response: " + auth_response)
+		auth_response = auth_response.split()
 		code = int(auth_response[0])
 
 		if(code == 200 or code == 201):
@@ -64,3 +66,15 @@ class UDP_Client:
 		
 		else:
 			print(code)
+
+	def logout(self):
+		self.socket.sendto(("LOGOUT s=" + self.session_key).encode("ascii"), self.address)
+		logout_response = self.socket.recv(1024).decode("ascii")
+		print("LOGOUT response: " + logout_response)
+
+	def anime(self, title):
+		anime_message = "ANIME aid=" + title + "&s=" + self.session_key
+		#anime_message = "ANIME aname=" + title + "&s=" + self.session_key
+		self.socket.sendto(anime_message.encode("ascii"), self.address)
+		anime_response = self.socket.recv(1024).decode("ascii")
+		print("ANIME response (" + title + "): " + anime_response)
