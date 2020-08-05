@@ -65,7 +65,19 @@ class UDP_Client:
 				#o router faz NAT e deve ser iniciada uma thread que faz PING periodicamente
 		
 		else:
-			print(code)
+			if code == 500:
+				print("Prompt user for uname and pw")
+			elif code == 502:
+				print("ERROR! Exiting.")
+			elif code == 503:
+				print("Your client is outdated (protover too low) and no longer supported. Please update your client. Exiting.")
+			elif code == 504:
+				print("The client has been banned. Exiting.")
+			elif code == 601:
+				print("ANIDB out of service. Exiting.")
+			else:
+				print("ERROR " + code)
+			exit()
 
 	def logout(self):
 		self.socket.sendto(("LOGOUT s=" + self.session_key).encode("ascii"), self.address)
@@ -73,8 +85,14 @@ class UDP_Client:
 		print("LOGOUT response: " + logout_response)
 
 	def anime(self, title):
-		anime_message = "ANIME aid=" + title + "&s=" + self.session_key
+		anime_message = "ANIME aid=" + title + "&amask=ac20c000000000" + "&s=" + self.session_key
 		#anime_message = "ANIME aname=" + title + "&s=" + self.session_key
 		self.socket.sendto(anime_message.encode("ascii"), self.address)
 		anime_response = self.socket.recv(1024).decode("ascii")
 		print("ANIME response (" + title + "): " + anime_response)
+
+	def byhash(self, size, ed2khash):
+		byhash_message = "FILE size=" + size + "&ed2k=" + ed2khash + "&s=" + self.session_key
+		self.socket.sendto(byhash_message.encode("ascii"), self.address)
+		byhash_response = self.socket.recv(1024).decode("ascii")
+		print("BYHASH response: " + byhash_response)
