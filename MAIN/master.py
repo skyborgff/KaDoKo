@@ -17,6 +17,7 @@ class Master():
             self.data = []
             self.save_connections()
 
+
     def mal_auth(self):
         return self.mal.status
 

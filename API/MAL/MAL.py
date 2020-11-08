@@ -17,7 +17,7 @@ from itertools import groupby
 AUTH_FILE = 'API/MAL/MAL_Auth.json'
 CLIENT_FILE = 'API/MAL/client_id.txt'
 Module_Name = os.path.join('Clients', 'MAL')
-
+Relations_FILE = 'API/MAL/relations.json'
 
 class Client:
     def __init__(self):
@@ -28,6 +28,11 @@ class Client:
         # This status is used to know if we are authenticated, or if we need to give a code
         self.status = self.auth.service(AUTH_FILE, CLIENT_FILE)  # False = need code, true = all good bro, keep apiing
         self._last_request = 0
+        if os.path.exists(Relations_FILE):
+            with open(Relations_FILE) as file:
+                self.relations = json.load(file)
+        else:
+            self.relations = []
 
     # if its the first authentication we need to provide the user code after he accepts stuff
     def finish_auth(self, code):
@@ -92,7 +97,7 @@ class Client:
 
     # Ask the API for the user anime list
     def anime_list(self, name):
-        all_fields = "?fields=list_status&limit=200"
+        all_fields = "?fields=list_status&limit=1000"
         url = URL_MAIN + URL_ANIME_LIST.format(user_name=name) + all_fields
         # Todo: implement paging
         if self.user_cache.valid('anime_list'):
@@ -110,3 +115,68 @@ class Client:
             grouped.setdefault(key, []).append(elem)
             grouped.setdefault('Total', []).append(elem)
         return grouped
+
+
+    def get_related(self, mal_id, relation_type=''):
+        anime_info = self.anime(mal_id)
+        related_list=[]
+        related_all_anime = anime_info['related_anime']
+        if not relation_type:
+            for related_anime in related_all_anime:
+                if related_anime['relation_type'] == relation_type or relation_type == '':
+                    rel_id = related_anime['node']['id']
+                    rel_type = self.anime(rel_id)['media_type']
+                    related_list.append({id: rel_id, type: rel_type})
+        return related_list
+
+    def generate_series(self, mal_id):
+
+        print('Generation for ' + str(mal_id) + ' started')
+        related_list = []
+        anime_info = self.anime(mal_id)
+        relation_delta = 0
+        related_list.append([mal_id, relation_delta])
+
+        prequel_list = self.get_related(mal_id, 'prequel')
+        sequel_list = self.get_related(mal_id, 'sequel')
+
+        if len(prequel_list) > 1:
+            prequel_id = 0
+            for anime in prequel_list:
+                if anime['type'] == 'tv':
+                    prequel_id = anime['id']
+            if not prequel_id:
+                prequel_id = prequel_list[0]['id']
+
+
+
+        series_list = []
+        series_list.append(self.get_info(mal_id))
+        print('Prequel start')
+        self.add_related(series_list, mal_id, 'Prequel')
+        print('Sequel start')
+        self.add_related(series_list, mal_id, 'Sequel')
+        id_list = []
+        for anime in series_list:
+            id_list.append(anime['@id'])
+        anime_data = {'data': series_list, "ids": id_list, 'added': [mal_id]}
+        self.data.append(anime_data)
+        self.save_data()
+        print('Generation for ' + str(mal_id) + ' ended')
+        return anime_data
+
+    def add_related_prequel(self, related, mal_id, relation_delta):
+        anime = self.anime(mal_id)
+        try:
+            self.array(anime['relatedanime'])
+        except:
+            return
+        for related in self.array(anime['relatedanime']['anime']):
+            if related['@type'] == relation_type:
+                prequel = self.add_related(series_list, related['@id'], relation_type)
+                if prequel:
+                    series_list.append(prequel)
+        if anime['type'] == 'TV Series':
+            return anime
+        else:
+            return
