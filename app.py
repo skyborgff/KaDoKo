@@ -7,7 +7,7 @@ def MALUserInfo():
     info = {}
     if mal.status==True:
         info = mal.user('@me')
-        print(info)
+        #print(info)
     return info
 
 @eel.expose
@@ -15,7 +15,7 @@ def MALAnimeInfo():
     info = {}
     if mal.status==True:
         info = mal.anime_list('@me')
-        print(info)
+        #print(info)
     return info
 
 @eel.expose

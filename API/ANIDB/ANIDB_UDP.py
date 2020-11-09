@@ -44,7 +44,7 @@ class UDP_Client:
 	def communicate(self, message):
 		self.socket.sendto(message.encode("ascii"), self.address)
 		data = self.socket.recv(1024).decode("ascii")
-		print(data)
+		#print(data)
 
 	def auth(self):
 		auth_message = "AUTH user=" + self.username + "&pass=" + self.password + \

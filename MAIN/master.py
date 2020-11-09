@@ -54,15 +54,17 @@ class Master():
                 continue
             else:
                 matches = self.anidb.search(mal_title, count=4)
-                if len(matches) > 1:
+                if len(matches) != 1:
                     match_info = []
                     for name in matches:
                         aid = self.anidb.get_id(name)
                         match_info.append({'name': name, 'id': aid})
-                    connection = {'ids': {'MAL': mid, 'AIDB': 0},
+                    if matches == []:
+                        aid = 0
+                    connection = {'ids': {'MAL': mid, 'AIDB': aid},
                                   'connected': 0,
                                   'name_list': match_info}
-                elif len(matches) == 1:
+                else:
                     aid = self.anidb.get_id(matches[0])
                     connection = {'ids': {'MAL': mid, 'AIDB': aid},
                                   'connected': 1,
@@ -78,5 +80,5 @@ class Master():
             json.dump(self.data, file, indent=1)
 
     def get_connections(self):
-        print(self.data)
+        #print(self.data)
         return self.data

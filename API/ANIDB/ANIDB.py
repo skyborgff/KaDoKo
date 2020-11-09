@@ -6,15 +6,20 @@ import difflib
 import time
 from Utils.Cache import Cache
 import eel
+import gzip
+import shutil
 
+SEARCH_GZ = 'API/ANIDB/anime-titles.xml.gz'
 SEARCH_DB = 'API/ANIDB/anime-titles.xml'
 SEARCH_DB_JSON = 'API/ANIDB/anime-titles.json'
 DATA_FILE = 'API/ANIDB/data_series.json'
+TITLES_LINK = 'https://raw.githubusercontent.com/ScudLee/anime-lists/master/animetitles.xml'
 
 
 class Client:
     def __init__(self):
         self.cache = Cache(Module_Name='Clients/ANIDB', SubModule_Name='info', validity='1M')
+        self.titles_cache = Cache(Module_Name='Clients/ANIDB', SubModule_Name='titles', validity='1w')
         self.DB = self.load_DB()
         if os.path.exists(DATA_FILE):
             with open(DATA_FILE) as file:
@@ -31,6 +36,11 @@ class Client:
         return json_data
 
     def load_DB(self):
+        if not self.titles_cache.valid('anime-titles'):
+            r = requests.get(TITLES_LINK, allow_redirects=True)
+            open(SEARCH_DB, 'wb').write(r.content)
+            self.titles_cache.save('anime-titles', '')
+            os.remove(SEARCH_DB_JSON)
         if not os.path.exists(SEARCH_DB_JSON):
             json_data = self.convert_DB()
         else:
@@ -56,7 +66,7 @@ class Client:
             if len(closest_title) != 0:
                 titles_list.append(closest_title[0])
         closest = difflib.get_close_matches(string, titles_list, n=count)
-        if closest[0].lower() == string.lower():
+        if closest and (closest[0].lower() == string.lower()):
             # if direct match just give that one
             closest = [closest[0]]
         return closest
@@ -83,7 +93,7 @@ class Client:
             result = requests.get(url)
             parsed = xmltodict.parse(result.content)
             data = json.loads(json.dumps(parsed))
-            print(data)
+            #print(data)
             try:
                 data = data['anime']
                 self.cache.save(aid, data)

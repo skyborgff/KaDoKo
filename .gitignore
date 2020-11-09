@@ -346,6 +346,7 @@ API/ANIDB/data_series.json
 API/MAL/CACHE_MAL.json
 API/MAL/MAL_Auth.json
 /Cache/Clients/ANIDB/info.json
+/Cache/Clients/ANIDB/titles.json
 /Cache/Clients/MAL/user.json
 /Cache/Clients/MAL/info.json
 /MAIN/connections.json
