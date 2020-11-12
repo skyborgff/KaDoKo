@@ -1,6 +1,5 @@
 <template>
     <div>
-        <script type=text/javascript src=/eel.js></script>
         <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
             <h1 class="h2">My Anime List</h1>
             <b-button pill class="mb-2 mb-md-0" @click="ButtonRefresh()" >
@@ -46,7 +45,7 @@
 
                 <div class="col-9 pl-0">
                     <ul id="anime" class="pl-0">
-                        <div class="container-fluid pl-0" v-for="(type) in StatusTypes" v-bind:key="value">
+                        <div class="container-fluid pl-0" v-for="(type) in StatusTypes" v-bind:key="type">
                             <div class="container-fluid" v-for="(value) in AnimeInfoJson[type]" v-bind:key="value['node']['id']">
                                 <div v-show="type==name_key[$route.path.split('/')[$route.path.split('/').length -1]]" class="container-fluid pl-0">
                                     <b-card :img-src="value['node']['main_picture']['medium']" :img-alt="value['node']['title']" img-left class="mb-3" bg-variant="dark" text-variant="white" img-height="135">
@@ -121,7 +120,7 @@ export default {
     },
     mounted: function() {
         this.MALAuthCode(this.$route.query.code);
-        eel.MALConnected()((val) => {
+        window.eel.MALConnected()((val) => {
             this.connected = val;
         });
         this.GetConnections()
@@ -130,7 +129,7 @@ export default {
     },
     methods: {
         ButtonConnect() {
-            eel.MALConnect()((val) => {
+            window.eel.MALConnect()((val) => {
                 if (!this.connected) {
                     window.location.href = val;
                 } else {
@@ -139,21 +138,21 @@ export default {
             })
         },
         ButtonRefresh() {
-            eel.MALRefresh();
+            window.eel.MALRefresh();
             this.MALUserInfo();
-            this.MALAnimeInfo;
+            this.MALAnimeInfo();
         },
         ButtonMALANIDB() {
-            eel.MALANIDBConnect();
+            window.eel.MALANIDBConnect();
         },
         MALConnected() {
-            eel.MALConnected()((val) => {
+            window.eel.MALConnected()((val) => {
                 this.connected = val
             })
         },
         MALUserInfo() {
             if (this.connected) {
-                eel.MALUserInfo()((val) => {
+                window.eel.MALUserInfo()((val) => {
                     if (val) {
                         this.UserStatsJson = val.anime_statistics;
                         this.MainStatsJson = val.main_statistics;
@@ -170,7 +169,7 @@ export default {
         },
         MALAnimeInfo() {
             if (this.connected) {
-                eel.MALAnimeInfo()((animelist) => {
+                window.eel.MALAnimeInfo()((animelist) => {
                     if (animelist) {
                         this.AnimeInfoJson = animelist
                     }
@@ -179,7 +178,7 @@ export default {
         },
         MALAuthCode(query) {
             if (query != undefined){
-                eel.MALAuthCode(query)((val) => {
+                window.eel.MALAuthCode(query)((val) => {
                     if (val=="True"){
                         window.location.href = (location.toString().split('?')[0] + 'Completed');
                         this.MALConnected();
@@ -190,7 +189,7 @@ export default {
         },
         GetConnections() {
             if (this.connected) {
-                eel.GetConnections()((Connections) => {
+                window.eel.GetConnections()((Connections) => {
                     if (Connections) {
                         this.Connections = Connections
                     }

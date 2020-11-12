@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <script type=text/javascript src=/eel.js></script>
+
     <NavBar />
     <Main />
   </div>

@@ -1,6 +1,7 @@
 import eel
 import time
 from MAIN.master import Master
+import webbrowser
 
 @eel.expose
 def MALUserInfo():
@@ -84,7 +85,8 @@ def mal_ani():
 eel.spawn(mal_ani)
 
 eel.init('web')  # or the name of your directory
-eel.start('index.html', mode='None', port=8282, disable_cache=True, close_callback=on_websocket_close, block=False)
+eel.start('index.html', mode=None, port=8282, disable_cache=True, close_callback=on_websocket_close, block=False)
+webbrowser.open('http://localhost:8081/', new=2)
 
 
 while True:

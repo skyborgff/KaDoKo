@@ -1,6 +1,5 @@
 <template>
     <div>
-        <script type=text/javascript src=/eel.js></script>
         <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
             <h1 class="h2">ANIDB</h1>
         </div>
@@ -55,14 +54,14 @@ export default {
         }
     },
     mounted: function() {
-        eel.ANIDBConnected()((val) => {
+        window.eel.eel.ANIDBConnected()((val) => {
             this.connected = val;
         });
     },
     methods: {
       onSubmit(evt) {
         evt.preventDefault()
-          eel.ANIDBConnect(this.form)((val) => {
+          window.eel.eel.ANIDBConnect(this.form)((val) => {
                 this.connected = val;
             })
 
