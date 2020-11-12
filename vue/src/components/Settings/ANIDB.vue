@@ -7,7 +7,7 @@
 
         <div class="row">
           <div pill v-show="!this.connected"  lg="4" class="col pb-2" variant="dark">
-              <b-form inline @submit="onSubmit" @reset="onReset">
+              <b-form inline @submit="onSubmit">
                   <b-form-group
                     id="input-group-1"
                     label="username"
