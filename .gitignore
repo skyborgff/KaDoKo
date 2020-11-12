@@ -353,3 +353,4 @@ API/MAL/MAL_Auth.json
 API/ANIDB/UDP_AUTH.json
 anidbtest.py
 # End of https://www.toptal.com/developers/gitignore/api/windows,pycharm,python,vue,vuejs,webstorm,web
+/API/ANIDB/UDP_Auth.json

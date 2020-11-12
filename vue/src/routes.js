@@ -1,6 +1,7 @@
 import Dashboard from "./components/Dashboard";
 import Calendar from "./components/Calendar";
 import MAL from "./components/Settings/MAL";
+import ANIDB from "./components/Settings/ANIDB";
 import Shows from "./components/Settings/Shows";
 
 export default [
@@ -16,6 +17,8 @@ export default [
     component: MAL,},
   { path: '/Settings/MAL/:code',
     component: MAL,},
+  { path: '/Settings/ANIDB',
+    component: ANIDB,},
   { path: '/Settings/Torrent',
     component: Calendar,},
   { path: '/Settings/Plex',

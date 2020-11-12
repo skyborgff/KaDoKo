@@ -3,11 +3,8 @@ import xmltodict
 import os
 import requests
 import difflib
-import time
 from Utils.Cache import Cache
 import eel
-import gzip
-import shutil
 
 SEARCH_GZ = 'API/ANIDB/anime-titles.xml.gz'
 SEARCH_DB = 'API/ANIDB/anime-titles.xml'
@@ -36,16 +33,13 @@ class Client:
         return json_data
 
     def load_DB(self):
-        if not self.titles_cache.valid('anime-titles'):
+        if not self.titles_cache.valid('anime-titles') or not os.path.exists(SEARCH_DB_JSON):
             r = requests.get(TITLES_LINK, allow_redirects=True)
             open(SEARCH_DB, 'wb').write(r.content)
             self.titles_cache.save('anime-titles', '')
-            os.remove(SEARCH_DB_JSON)
-        if not os.path.exists(SEARCH_DB_JSON):
-            json_data = self.convert_DB()
-        else:
-            with open(SEARCH_DB_JSON, encoding='utf8') as json_file:
-                json_data = json.load(json_file, encoding='utf8')
+            self.convert_DB()
+        with open(SEARCH_DB_JSON, encoding='utf8') as json_file:
+            json_data = json.load(json_file, encoding='utf8')
         return json_data
 
     def array(self, data):

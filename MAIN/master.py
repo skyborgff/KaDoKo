@@ -1,5 +1,6 @@
 from API.MAL.MAL import Client as MalClient
 from API.ANIDB.ANIDB import Client as ANIClient
+from API.ANIDB.ANIDB_UDP import UDP_Client as ANIUDPClient
 import os
 import json
 import eel
@@ -10,6 +11,7 @@ class Master():
     def __init__(self):
         self.mal = MalClient()
         self.anidb = ANIClient()
+        self.anidbudp = ANIUDPClient()
         if os.path.exists(DB_FILE):
             with open(DB_FILE, 'r') as file:
                 self.data = json.load(file)
@@ -20,6 +22,9 @@ class Master():
 
     def mal_auth(self):
         return self.mal.status
+
+    def anidbAuth(self, username, password):
+        return ANIUDPClient.auth(username, password)
 
     def connect_known(self, mid, aidb):
         connections = self.get_connections()

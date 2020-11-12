@@ -6,9 +6,7 @@
             <b-button pill class="mb-2 mb-md-0" @click="ButtonRefresh()" >
                 <b-icon id="ButtonRefresh" icon="arrow-clockwise"></b-icon>
             </b-button>
-            <b-button pill class="mb-2 mb-md-0" @click="ButtonMALANIDB()" >
-                <b-icon id="ButtonMALANIDB">Connect MAL to ANIDB</b-icon>
-            </b-button>
+            <b-button pill class="mb-2 mb-md-0" @click="ButtonMALANIDB()" >Connect MAL to ANIDB</b-button>
         </div>
 
         <div class="row">

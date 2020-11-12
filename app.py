@@ -23,6 +23,15 @@ def MALConnected():
     return mal.status==True
 
 @eel.expose
+def ANIDBConnected():
+    print(master.anidbudp.logged)
+    return master.anidbudp.logged
+
+@eel.expose
+def ANIDBConnect(form):
+    return master.anidbudp.auth(form["username"], form["password"])
+
+@eel.expose
 def MALConnect():
     return mal_url
 
