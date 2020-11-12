@@ -19,12 +19,20 @@ CLIENT_FILE = 'API/MAL/client_id.txt'
 Module_Name = os.path.join('Clients', 'MAL')
 Relations_FILE = 'API/MAL/relations.json'
 
-class Client:
+#self.info_cache = Cache(Module_Name=Module_Name, SubModule_Name='info', validity='1M')
+#self.user_cache = Cache(Module_Name=Module_Name, SubModule_Name='user', validity='30m')
+
+class Defaults:
     def __init__(self):
+        self.submodule = 'info'
+        self.validity = '1M'
+
+class Client:
+    def __init__(self, cache):
+        self.Module = 'MAL'
+        self.cache = cache
         # Authentication for MAL api. It handles the token creation / refreshing
         self.auth = OAuth()
-        self.info_cache = Cache(Module_Name=Module_Name, SubModule_Name='info', validity='1M')
-        self.user_cache = Cache(Module_Name=Module_Name, SubModule_Name='user', validity='30m')
         # This status is used to know if we are authenticated, or if we need to give a code
         self.status = self.auth.service(AUTH_FILE, CLIENT_FILE)  # False = need code, true = all good bro, keep apiing
         self._last_request = 0
@@ -53,38 +61,38 @@ class Client:
             raise RuntimeError('Failed to grab data')
 
     def refresh(self):
-        self.info_cache.refresh()
-        self.user_cache.refresh()
+        self.cache.refresh(self.Module, 'info')
+        self.cache.refresh(self.Module, 'user')
 
     # Search the API for the id of the Anime
     def anime(self, anime_id):
         all_fields = '?fields=id,title,main_picture,alternative_titles,start_date,end_date,synopsis,mean,rank,popularity,num_list_users,num_scoring_users,nsfw,created_at,updated_at,media_type,status,genres,my_list_status,num_episodes,start_season,broadcast,source,average_episode_duration,rating,pictures,background,related_anime,related_manga,recommendations,studios,statistics'
         url = URL_MAIN + URL_DETAILS.format(id=str(anime_id)) + all_fields
-        if self.info_cache.valid('anime'):
-            data = self.info_cache.get('anime')
+        if self.cache.valid('anime', self.Module, 'info'):
+            data = self.cache.get('anime', self.Module, 'info')
         else:
             data = self.load(url)
-            self.info_cache.save('anime', data)
+            self.cache.save(data, 'anime', self.Module, 'info')
         return data
 
     # Search the API for the name of the Anime
     def search(self, name, limit=20):
         url = URL_MAIN + URL_SEARCH.format(title=name, limit=limit)
-        if self.info_cache.valid('search'):
-            data = self.info_cache.get('search')
+        if self.cache.valid('search', self.Module, 'info'):
+            data = self.cache.get('search', self.Module, 'info')
         else:
             data = self.load(url)
-            self.info_cache.save('search', data)
+            self.cache.save( data, 'search', self.Module, 'info')
         return data
 
     # Ask the API for the user info
     def user(self, name):
         url = URL_MAIN + URL_USER.format(user_name=name)
-        if self.user_cache.valid('user'):
-            data = self.user_cache.get('user')
+        if self.cache.valid('user', self.Module, 'user'):
+            data = self.cache.get('user', self.Module, 'user')
         else:
             data = self.load(url)
-            self.user_cache.save('user', data)
+            self.cache.save(data, 'user', self.Module, 'user', '30m')
         # Separate statistics into Main and All so we can do v-for without v-if
         data['main_statistics'] = {}
         data['main_statistics']['Watching'] = data['anime_statistics']['num_items_watching']
@@ -100,11 +108,11 @@ class Client:
         all_fields = "?fields=list_status&limit=1000"
         url = URL_MAIN + URL_ANIME_LIST.format(user_name=name) + all_fields
         # Todo: implement paging
-        if self.user_cache.valid('anime_list'):
-            data = self.user_cache.get('anime_list')
+        if self.cache.valid('anime_list', self.Module, 'user'):
+            data = self.cache.get('anime_list', self.Module, 'user')
         else:
             data = self.load(url)['data']
-            self.user_cache.save('anime_list', data)
+            self.cache.save(data, 'anime_list', self.Module, 'user')
 
         # We do the sorting so it shows in order in vue
         data.sort(key=lambda x: int(x['node']['id']), reverse=True)

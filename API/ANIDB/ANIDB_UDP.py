@@ -10,7 +10,7 @@ INFO_client_version = "1"
 INFO_api_version = "3"
 
 class UDP_Client:
-    def __init__(self):
+    def __init__(self, cache):
         self.logged = False
         self.clientname = INFO_client_name
         self.client_version = INFO_client_version
@@ -35,7 +35,7 @@ class UDP_Client:
                 self.password = data['ANIDB_PW']
                 # remover após testes!
                 json_file.close()
-                self.logged = self.auth()
+                self.logged = self.auth(self.username, self.password)
 
     def open_socket(self):
         self.socket = socket.socket(self.family, socket.SOCK_DGRAM, socket.IPPROTO_UDP)

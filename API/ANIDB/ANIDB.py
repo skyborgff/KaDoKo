@@ -3,7 +3,6 @@ import xmltodict
 import os
 import requests
 import difflib
-from Utils.Cache import Cache
 import eel
 
 SEARCH_GZ = 'API/ANIDB/anime-titles.xml.gz'
@@ -12,11 +11,13 @@ SEARCH_DB_JSON = 'API/ANIDB/anime-titles.json'
 DATA_FILE = 'API/ANIDB/data_series.json'
 TITLES_LINK = 'https://raw.githubusercontent.com/ScudLee/anime-lists/master/animetitles.xml'
 
+#self.cache = Cache(Module_Name='Clients/ANIDB', SubModule_Name='info', validity='1M')
+#self.titles_cache = Cache(Module_Name='Clients/ANIDB', SubModule_Name='titles', validity='1w')
 
 class Client:
-    def __init__(self):
-        self.cache = Cache(Module_Name='Clients/ANIDB', SubModule_Name='info', validity='1M')
-        self.titles_cache = Cache(Module_Name='Clients/ANIDB', SubModule_Name='titles', validity='1w')
+    def __init__(self, cache):
+        self.Module = 'ANIDB'
+        self.cache = cache
         self.DB = self.load_DB()
         if os.path.exists(DATA_FILE):
             with open(DATA_FILE) as file:
@@ -33,14 +34,27 @@ class Client:
         return json_data
 
     def load_DB(self):
-        if not self.titles_cache.valid('anime-titles') or not os.path.exists(SEARCH_DB_JSON):
+        cache_valid = self.cache.valid('anime-titles',
+                                       self.Module,
+                                       'files')
+        if not cache_valid:
             r = requests.get(TITLES_LINK, allow_redirects=True)
-            open(SEARCH_DB, 'wb').write(r.content)
-            self.titles_cache.save('anime-titles', '')
-            self.convert_DB()
-        with open(SEARCH_DB_JSON, encoding='utf8') as json_file:
-            json_data = json.load(json_file, encoding='utf8')
-        return json_data
+            self.cache.save(r.content,
+                            'anime-titles-xml',
+                            self.Module,
+                            'files',
+                            '1W',
+                            'xml')
+            data_dict = xmltodict.parse(r.content)
+            json_data = json.loads(json.dumps(data_dict))
+            self.cache.save(json_data,
+                            'anime-titles',
+                            self.Module,
+                            'files',
+                            '1W',
+                            ensure_ascii=False)
+
+        return self.cache.get('anime-titles', self.Module, 'files',)
 
     def array(self, data):
         if isinstance(data, list):
@@ -76,9 +90,9 @@ class Client:
 
     def get_info(self, aid):
         print('asking ANIDB for: ' + str(aid))
-        if self.cache.valid(aid):
+        if self.cache.valid(aid, self.Module, 'info'):
             print('cached')
-            return self.cache.get(aid)
+            return self.cache.get(aid, self.Module, 'info')
         else:
             print('asking API')
             eel.sleep(3)
@@ -90,7 +104,7 @@ class Client:
             #print(data)
             try:
                 data = data['anime']
-                self.cache.save(aid, data)
+                self.cache.save(data, aid, self.Module, 'info')
             except:
                 data = {}
         return data
