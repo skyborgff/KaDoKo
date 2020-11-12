@@ -1,6 +1,7 @@
 from API.MAL.MAL import Client as MalClient
 from API.ANIDB.ANIDB import Client as ANIClient
 from API.ANIDB.ANIDB_UDP import UDP_Client as ANIUDPClient
+from Utils.Cache import Cache
 import os
 import json
 import eel
@@ -9,9 +10,10 @@ DB_FILE = 'MAIN/connections.json'
 
 class Master():
     def __init__(self):
-        self.mal = MalClient()
-        self.anidb = ANIClient()
-        self.anidbudp = ANIUDPClient()
+        self.Cache = Cache()
+        self.mal = MalClient(self.Cache)
+        self.anidb = ANIClient(self.Cache)
+        self.anidbudp = ANIUDPClient(self.Cache)
         if os.path.exists(DB_FILE):
             with open(DB_FILE, 'r') as file:
                 self.data = json.load(file)
@@ -64,8 +66,7 @@ class Master():
                     for name in matches:
                         aid = self.anidb.get_id(name)
                         match_info.append({'name': name, 'id': aid})
-                    if matches == []:
-                        aid = 0
+                    aid = 0
                     connection = {'ids': {'MAL': mid, 'AIDB': aid},
                                   'connected': 0,
                                   'name_list': match_info}
@@ -76,7 +77,8 @@ class Master():
                                   'name_list': []}
                     print('Found match: ' + str(aid) + '\nGenerating series')
                 self.data.append(connection)
-                self.anidb.generate_series(aid)
+                if aid != 0:
+                    self.anidb.generate_series(aid)
             self.save_connections()
 
     def save_connections(self):
