@@ -14,6 +14,7 @@
     "core-js": "^3.6.5",
     "jquery": "^3.5.1",
     "vue": "^2.6.11",
+    "vue-cli": "^2.9.6",
     "vue-material": "^1.0.0-beta-14",
     "vue-router": "^3.3.4"
   },

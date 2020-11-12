@@ -35,6 +35,11 @@
                 </router-link>
               </li>
               <li class="nav-item">
+                <router-link class="nav-link" to="/Settings/ANIDB">
+                  ANIDB
+                </router-link>
+              </li>
+              <li class="nav-item">
                 <router-link class="nav-link" to="/Settings/Torrent">
                   Torrent
                 </router-link>

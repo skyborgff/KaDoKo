@@ -7,7 +7,7 @@ def MALUserInfo():
     info = {}
     if mal.status==True:
         info = mal.user('@me')
-        print(info)
+        #print(info)
     return info
 
 @eel.expose
@@ -15,12 +15,21 @@ def MALAnimeInfo():
     info = {}
     if mal.status==True:
         info = mal.anime_list('@me')
-        print(info)
+        #print(info)
     return info
 
 @eel.expose
 def MALConnected():
     return mal.status==True
+
+@eel.expose
+def ANIDBConnected():
+    print(master.anidbudp.logged)
+    return master.anidbudp.logged
+
+@eel.expose
+def ANIDBConnect(form):
+    return master.anidbudp.auth(form["username"], form["password"])
 
 @eel.expose
 def MALConnect():
@@ -67,8 +76,8 @@ def mal_ani():
     eel.sleep(5)
     mal.user('@me')
     mal.anime_list('@me')
-    #master.connect_ids('Total')
-    master.connect_ids('watching')
+    master.connect_ids('Total')
+    #master.connect_ids('watching')
     eel.sleep(60 * 60 * 3)  # tri-Hourly grab
 
 
