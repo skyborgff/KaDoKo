@@ -1,34 +1,30 @@
-import Dashboard from "./components/Dashboard";
+import Main from "./components/Main";
+import Options from "./components/Setup/Options";
+import Setup from "./components/Setup/Setup";
+import Authenticate from "./components/Setup/Authenticate";
+// import Dashboard from "./components/Dashboard";
 import Calendar from "./components/Calendar";
-import MAL from "./components/Settings/MAL";
-import ANIDB from "./components/Settings/ANIDB";
-import Shows from "./components/Settings/Shows";
+// import MAL from "./components/Settings/MAL";
+// import ANIDB from "./components/Settings/ANIDB";
+// import Fix_Matching from "./components/Settings/Fix_Matching";
+// import Anime from "./components/Settings/Anime";
+
 
 export default [
-  { path: '/Dashboard',
-    component: Dashboard,},
-  { path: '/Calendar',
-    component: Calendar,},
-  { path: '/Status',
-    component: Calendar,},
-  { path: '/Settings/Shows',
-    component: Shows,},
-  { path: '/Settings/MAL',
-    component: MAL,},
-  { path: '/Settings/MAL/:code',
-    component: MAL,},
-  { path: '/Settings/ANIDB',
-    component: ANIDB,},
-  { path: '/Settings/Torrent',
-    component: Calendar,},
-  { path: '/Settings/Plex',
-    component: Calendar,},
-  { path: '/Settings/MAL',
-    redirect: '/Settings/MAL/Watching' },
+  { path: '/main', component: Main,
+    children: [
+      {path: 'Settings', component: Calendar}
+    ]},
+  { path: '/Setup', component: Setup,
+    children: [
+      {path: '', component: Options},
+      {path: 'Options', component: Options},
+      {path: 'Authenticate', component: Authenticate}
+    ]},
   { path: '*',
-    redirect: '/Dashboard' },
+    redirect: '/Main' },
   { path: '',
-    redirect: '/Dashboard' },
+    redirect: '/Main' },
   { path: '/',
-    redirect: '/Dashboard' },
+    redirect: '/Main' },
 ];

@@ -25,8 +25,8 @@
 
             <ul class="nav flex-column mb-2 ">
               <li class="nav-item">
-                <router-link class="nav-link" to="/Settings/Shows">
-                  Shows
+                <router-link class="nav-link" to="/Settings/Fix_Matching">
+                  Fix Matching
                 </router-link>
               </li>
               <li class="nav-item">

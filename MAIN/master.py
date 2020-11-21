@@ -78,7 +78,9 @@ class Master():
                     print('Found match: ' + str(aid) + '\nGenerating series')
                 self.data.append(connection)
                 if aid != 0:
-                    self.anidb.generate_series(aid)
+                    series = self.anidb.generate_series(aid)
+                    with open(f'MAIN/Series/{aid}.json', 'w+') as file:
+                        json.dump(series, file, indent=1)
             self.save_connections()
 
     def save_connections(self):

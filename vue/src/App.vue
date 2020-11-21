@@ -1,21 +1,27 @@
 <template>
   <div id="app">
-
-    <NavBar />
-    <Main />
+    <router-view></router-view>
   </div>
 </template>
 
 <script>
-import NavBar from './components/NavBar.vue'
-import Main from './components/Main.vue'
 
 export default {
   name: 'app',
   components: {
-    NavBar,
-    Main
-  }
+  },
+  data: function() {
+    return {
+      first: false,
+    }
+  },
+  mounted: function() {
+    var nav = this.$router
+    window.eel.expose(route_to, 'route_to'); // Expose this function to Python
+    function route_to(destination) {
+        nav.push(destination[0])
+    }
+  },
 }
 </script>
 
@@ -34,4 +40,5 @@ export default {
     body{
     height: 100vh;
   }
+
 </style>
