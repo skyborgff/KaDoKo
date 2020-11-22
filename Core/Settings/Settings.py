@@ -2,19 +2,29 @@ import json
 import os
 
 
+# Todo: implement a setting class with defaults
 class Settings:
     def __init__(self):
-        self.db: str = None
         self.library: str = None
+        self.db: str = None
+        self.optional_libraries: list = []
+        self.optional_dbs: list = []
+        self.plex = False
         self.first = True
         self.load()
 
     def save(self):
         settings_file = f'Settings/Core/settings.json'
-        settings = {'db': self.db,
-                    'library': self.library}
+        settings = {'library': self.library,
+                    'db': self.db,
+                    'optional_libraries': self.optional_libraries,
+                    'optional_dbs': self.optional_dbs,
+                    'plex': self.plex,
+                    'first': self.first,
+                    }
         with open(settings_file, 'w+') as file:
-            json.dump(settings, file, indent=1)
+            os.makedirs('Settings/Core', exist_ok=True)
+            json.dump(settings, file, indent=4)
 
     def load(self):
         settings_file = f'Settings/Core/settings.json'

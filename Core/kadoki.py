@@ -6,7 +6,7 @@ import eel
 
 class Kadoki:
     def __init__(self):
-        self.plugins = Plugins()
+        self.settings: Settings = Settings()
+        self.plugins: Plugins = Plugins(self.settings)
         self.plugins.load()
-        self.settings = Settings()
         self.ui = UI(self)

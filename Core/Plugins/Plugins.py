@@ -1,12 +1,11 @@
 from Core.Plugins.Loader import Loader
-from Core.Plugins.Base.Auth.Authentication import AuthState
+from Core.Plugins.Base.Auth.Authentication import AuthState, AuthType
 
 class Plugins:
-    def __init__(self):
+    def __init__(self, settings):
         self.list = []
         self.dictionary = {}
-        self.main_library = None
-        self.main_db = None
+        self.settings = settings
 
     def load(self):
         self.dictionary, self.list = Loader().get('Plugins')
@@ -22,10 +21,31 @@ class Plugins:
         for plugin in self.list:
             auth_types.append(plugin.authenticator.type)
 
-    def all_authenticated(self):
+    def get_authentication_needed(self)-> dict:
+        OAuth = []
+        UserPass = []
         for plugin in self.list:
-            if plugin.authenticator.state == AuthState.NotLogged:
-                return False
-        else:
-            return True
+            if plugin.name == self.settings.library or \
+                plugin.name == self.settings.db or \
+                plugin.name in self.settings.optional_libraries or \
+                    plugin.name in self.settings.optional_dbs:
 
+                if plugin.authenticator.state == AuthState.NotLogged:
+                    name = plugin.name
+                    logo = plugin.logo_url
+                    auth_type = plugin.authenticator.type
+                    if auth_type == AuthType.OAuth:
+                        url = plugin.authenticator.url()
+                        OAuth.append({'name': name,
+                                      'url': url,
+                                      'logo_url': logo,
+                                      'create_url': ''})
+                    elif type == AuthType.UserPass:
+                        raise NotImplementedError
+        return {'OAuth': OAuth, 'UserPass': UserPass}
+
+    def get(self, name):
+        for plugin in self.list:
+            if plugin.name == name:
+                return plugin
+        raise ModuleNotFoundError

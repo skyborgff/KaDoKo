@@ -7,3 +7,4 @@ class BasePlugin:
         self.name: str = None
         self.type: PluginType = None
         self.authenticator: Authenticator = None
+        self.logo_url = ''

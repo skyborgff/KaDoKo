@@ -19,7 +19,10 @@ export default [
     children: [
       {path: '', component: Options},
       {path: 'Options', component: Options},
-      {path: 'Authenticate', component: Authenticate}
+      {path: 'Authenticate', component: Authenticate,
+      children: [
+        {path: ':module', component: Authenticate}
+      ]}
     ]},
   { path: '*',
     redirect: '/Main' },

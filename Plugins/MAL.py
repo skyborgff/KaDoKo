@@ -6,6 +6,7 @@ class MAL(BaseLibrary):
     def __init__(self):
         super().__init__()
         self.name = "MAL"
+        self.logo_url = 'https://upload.wikimedia.org/wikipedia/commons/7/7a/MyAnimeList_Logo.png'
         client_id = "add1ed488bd218c2e10146345377a0b8"
         url_auth = "https://myanimelist.net/v1/oauth2/authorize"
         url_token = "https://myanimelist.net/v1/oauth2/token"

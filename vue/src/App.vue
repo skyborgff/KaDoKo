@@ -16,11 +16,6 @@ export default {
     }
   },
   mounted: function() {
-    var nav = this.$router
-    window.eel.expose(route_to, 'route_to'); // Expose this function to Python
-    function route_to(destination) {
-        nav.push(destination[0])
-    }
   },
 }
 </script>

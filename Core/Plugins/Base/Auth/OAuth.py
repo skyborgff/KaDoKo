@@ -11,7 +11,7 @@ class OAuth(Authenticator):
         super().__init__(AuthType.OAuth)
         self.name: str = name
         self.client_id: str = client_id
-        self.code_verifier = self.code_challenge = ''
+        self.code_verifier = self.code_challenge = secrets.token_urlsafe(100)[:128]
         self.url_auth = url_auth
         self.url_token = url_token
         self.check_auth()
@@ -21,27 +21,26 @@ class OAuth(Authenticator):
         self.token_expire_time: int = 0
 
     def url(self)-> str:
-        self.code_verifier = self.code_challenge = secrets.token_urlsafe(100)[:128]
+        #self.code_verifier = self.code_challenge = secrets.token_urlsafe(100)[:128]
         auth_params: dict = {
             "response_type": "code",
             "client_id": self.client_id,
             "code_challenge": self.code_challenge,
+            "code_challenge_method": 'plain',
             "state": "RequestID42",
         }
+        print(self.code_challenge)
         url = self.url_auth + "?" + urlencode(auth_params)
         return url
 
     def code(self, code: str) -> AuthCode:
-        if code == {}:
-            raise ValueError("Code given can not be empty")
         token_params: dict = {
             "client_id": self.client_id,
             "code": code,
             "code_verifier": self.code_verifier,
             "grant_type": "authorization_code",
         }
-
-        token_response = requests.post(self.url_token, data=token_params)
+        token_response = requests.post(self.url_token, token_params)
 
         if not token_response.ok:
             return AuthCode.BadUnknown

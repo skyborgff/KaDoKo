@@ -2,6 +2,7 @@ from enum import Enum
 import json
 from datetime import datetime, timedelta
 import os.path
+import os
 
 
 class AuthType(Enum):
@@ -30,6 +31,7 @@ class Authenticator:
         self.state: AuthState = AuthState.NotLogged
 
     def save(self, credentials: dict):
+        os.makedirs(f'Settings/Plugin/{self.name}', exist_ok=True)
         auth_file = f'Settings/Plugin/{self.name}/auth.json'
         with open(auth_file, 'w+') as json_file:
             json.dump(credentials, json_file, indent=1)
