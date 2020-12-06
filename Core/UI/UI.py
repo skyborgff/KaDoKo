@@ -13,7 +13,11 @@ class UI:
         return library_names
 
     def db_list(self):
-        return self.kadoki.plugins.dbs()
+        dbs = self.kadoki.plugins.dbs()
+        dbs_names = []
+        for db in dbs:
+            dbs_names.append(db['name'])
+        return dbs_names
 
     def setup_settings(self, settings: dict):
         self.kadoki.settings.library = settings.get('selected_library')

@@ -14,11 +14,12 @@ class OAuth(Authenticator):
         self.code_verifier = self.code_challenge = secrets.token_urlsafe(100)[:128]
         self.url_auth = url_auth
         self.url_token = url_token
-        self.check_auth()
         self.token: str = None
         self.token_type: str = None
         self.token_refresh: str = None
         self.token_expire_time: int = 0
+        self.check_auth()
+
 
     def url(self)-> str:
         #self.code_verifier = self.code_challenge = secrets.token_urlsafe(100)[:128]

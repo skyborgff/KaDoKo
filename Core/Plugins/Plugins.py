@@ -1,5 +1,8 @@
 from Core.Plugins.Loader import Loader
 from Core.Plugins.Base.Auth.Authentication import AuthState, AuthType
+from Core.Plugins.Base.BaseMetadata import BaseMetadata
+from Core.Plugins.Base.BaseLibrary import BaseLibrary
+from typing import Union
 
 class Plugins:
     def __init__(self, settings):
@@ -30,7 +33,7 @@ class Plugins:
                 plugin.name in self.settings.optional_libraries or \
                     plugin.name in self.settings.optional_dbs:
 
-                if plugin.authenticator.state == AuthState.NotLogged:
+                if plugin.authenticator is not None and plugin.authenticator.state == AuthState.NotLogged:
                     name = plugin.name
                     logo = plugin.logo_url
                     auth_type = plugin.authenticator.type
@@ -44,7 +47,7 @@ class Plugins:
                         raise NotImplementedError
         return {'OAuth': OAuth, 'UserPass': UserPass}
 
-    def get(self, name):
+    def get(self, name) -> Union[BaseLibrary, BaseMetadata]:
         for plugin in self.list:
             if plugin.name == name:
                 return plugin

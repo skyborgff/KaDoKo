@@ -105,7 +105,7 @@ class Client:
 
     # Ask the API for the user anime list
     def anime_list(self, name):
-        all_fields = "?fields=list_status&limit=1000"
+        all_fields = "?fields=list_status&limit=10000"
         url = URL_MAIN + URL_ANIME_LIST.format(user_name=name) + all_fields
         # Todo: implement paging
         if self.cache.valid('anime_list', self.Module, 'user'):
