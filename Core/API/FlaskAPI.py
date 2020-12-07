@@ -1,5 +1,6 @@
-from flask import Flask, jsonify, request
-from flask_cors import CORS
+from flask import Flask, jsonify, request, send_file, send_from_directory
+from flask_cors import CORS, cross_origin
+import os
 
 
 class FlaskAPI:
@@ -8,7 +9,7 @@ class FlaskAPI:
         DEBUG = True
 
         # instantiate the app
-        self.app = Flask(__name__)
+        self.app = Flask(__name__, static_folder="FlaskFiles")
         self.app.config.from_object(__name__)
 
         # enable CORS
@@ -48,3 +49,12 @@ class FlaskAPI:
             self.kadoki.ui.set_authentication(post_data)
             response_object['message'] = 'Auth Received'
             return jsonify(response_object)
+
+        @self.app.route('/visualize_graph')
+        def visualize_graph():
+            self.kadoki.database.generate_graph("Core/API/FlaskFiles/force/force.json")
+            return self.app.send_static_file("force/force.html")
+
+        @self.app.route('/force/<path:path>')
+        def send_force(path):
+            return send_from_directory('FlaskFiles/force', path)

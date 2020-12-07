@@ -1,5 +1,9 @@
 import networkx as nx
 import os
+from networkx.readwrite import json_graph
+import json
+import pickle
+import jsonpickle
 
 database_folder = f'Settings/Database'
 database_file = f'graph.gpickle'
@@ -17,10 +21,16 @@ class Database:
         if os.path.exists(database_path):
             self.graph = nx.read_gpickle(database_path)
         else:
-            self.graph = nx.Graph()
+            self.graph = nx.DiGraph()
 
     def save(self):
         nx.write_gpickle(self.graph, database_path)
 
+    def generate_graph(self, path):
+        d = json_graph.node_link_data(self.graph)
+        data = jsonpickle.encode(d, unpicklable=True, indent=1)
+        with open(path, "w+") as file:
+            file.write(data)
+        print(f"Wrote node-link JSON data to {path}")
 
-# Note To Self: I was seeing how to generate the graphs with classes.
+# Note To Self: Pickling stuff for the graph

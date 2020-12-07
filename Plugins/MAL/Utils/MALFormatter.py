@@ -29,9 +29,9 @@ def AnimeList(List: list):
         MetaID = GenericStruct.MetaID(PluginName="MAL", id=str(id))
         PureAnime.id.list.append(MetaID)
 
-        DefaultCountry = None
-        DefaultLanguage = pycountry.languages.get(name="Japanese")
-        DefaultScript = pycountry.scripts.get(name='Latin')
+        DefaultCountry = 'Japan'
+        DefaultLanguage = "Japanese"
+        DefaultScript = 'Latin'
         DefaultLocalization = GenericStruct.Localization(Country=DefaultCountry,
                                                          Language=DefaultLanguage,
                                                          Script=DefaultScript)

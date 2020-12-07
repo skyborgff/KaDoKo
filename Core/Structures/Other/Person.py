@@ -20,4 +20,8 @@ class Person():
     name: str
     birthday: str
     gender: Gender
-    country: Country
+    country: str
+
+    def __hash__(self):
+        string = f"{self.name}, {self.birthday}"
+        return hashlib.md5(bytes(string, 'utf-8')).hexdigest()
