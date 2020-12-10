@@ -2,6 +2,7 @@ import Main from "./components/Main";
 import Options from "./components/Setup/Options";
 import Setup from "./components/Setup/Setup";
 import Authenticate from "./components/Setup/Authenticate";
+import DataGraph from "./components/Debug/DataGraph";
 // import Dashboard from "./components/Dashboard";
 import Calendar from "./components/Calendar";
 // import MAL from "./components/Settings/MAL";
@@ -13,7 +14,8 @@ import Calendar from "./components/Calendar";
 export default [
   { path: '/main', component: Main,
     children: [
-      {path: 'Settings', component: Calendar}
+      {path: '/Settings', component: Calendar},
+      {path: '/Debug/Graph', component: DataGraph, children: [{path: ':graph_type', component: DataGraph}]}
     ]},
   { path: '/Setup', component: Setup,
     children: [

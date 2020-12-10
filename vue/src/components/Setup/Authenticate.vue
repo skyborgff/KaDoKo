@@ -32,39 +32,39 @@ export default {
     this.check_auth();
     this.get_authentication_needed();
   },
-    methods: {
-      check_auth(){
-        var query = this.$route.query;
-        if (Object.keys(query).length !== 0){
-          var code = query.code;
-          var module = this.$route.params.module;
-          const path = 'http://localhost:8283/set_authentication';
-          axios.post(path, {'module': module, 'code': code})
-            .then(() =>{
-              this.$router.push(this.$route.path)
-              this.get_authentication_needed()
-            })
-        }
-      },
-      check_empty(){
-        if (this.OAuth_list.length === 0 && this.UserPass_list.length === 0 && this.got_reply){
-          this.$router.push('/Main')
-        }
-        this.$router.push(this.$route.path)
-      },
-      get_authentication_needed() {
-        const path = 'http://localhost:8283/get_authentication_needed';
-        axios.get(path).then((res) => {
-            this.OAuth_list = res.data['OAuth'];
-            this.UserPass_list = res.data['UserPass'];
-            this.got_reply = true
-            this.check_empty();
-          });
-      },
-      GoTo(destination){
-          window.location.href = destination;
+  methods: {
+    check_auth(){
+      var query = this.$route.query;
+      if (Object.keys(query).length !== 0){
+        var code = query.code;
+        var module = this.$route.params.module;
+        const path = 'http://localhost:8283/set_authentication';
+        axios.post(path, {'module': module, 'code': code})
+          .then(() =>{
+            this.$router.push(this.$route.path)
+            this.get_authentication_needed()
+          })
       }
+    },
+    check_empty(){
+      if (this.OAuth_list.length === 0 && this.UserPass_list.length === 0 && this.got_reply){
+        this.$router.push('/Main')
+      }
+      this.$router.push(this.$route.path)
+    },
+    get_authentication_needed() {
+      const path = 'http://localhost:8283/get_authentication_needed';
+      axios.get(path).then((res) => {
+          this.OAuth_list = res.data['OAuth'];
+          this.UserPass_list = res.data['UserPass'];
+          this.got_reply = true
+          this.check_empty();
+        });
+    },
+    GoTo(destination){
+        window.location.href = destination;
     }
+  }
 }
 </script>
 

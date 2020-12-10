@@ -104,7 +104,7 @@ class Rating:
         self.value = 0
         if rating_dict is not None:
             try:
-                self.count = rating_dict["permanent"]["@count"]
+                self.count = rating_dict["permanent"]["@ClassLinksCount"]
                 self.value = rating_dict["permanent"]["#text"]
             except KeyError:
                 self.count = rating_dict["@votes"]

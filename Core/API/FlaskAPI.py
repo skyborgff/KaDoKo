@@ -57,4 +57,5 @@ class FlaskAPI:
 
         @self.app.route('/force/<path:path>')
         def send_force(path):
+            self.kadoki.database.generate_graph("Core/API/FlaskFiles/force/force.json")
             return send_from_directory('FlaskFiles/force', path)

@@ -12,7 +12,7 @@ database_path = os.path.join(database_folder, database_file)
 
 class Database:
     def __init__(self):
-        self.graph: nx.classes.Graph = None
+        self.graph: nx.classes.DiGraph = None
         self.load_graph()
 
 
@@ -33,4 +33,16 @@ class Database:
             file.write(data)
         print(f"Wrote node-link JSON data to {path}")
 
+    def remove_successor_edges(self, node_hash):
+        successors = self.graph.successors(node_hash)
+        successors_list = []
+        for successor in successors:
+            successors_list.append(successor)
+        for successor in successors_list:
+            self.graph.remove_edge(node_hash, successor)
+
+
+
+
 # Note To Self: Pickling stuff for the graph
+# Todo: add the graph into the UI

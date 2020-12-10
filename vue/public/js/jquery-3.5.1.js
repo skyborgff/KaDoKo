@@ -2732,7 +2732,7 @@ function matcherFromGroupMatchers( elementMatchers, setMatchers ) {
 				}
 			}
 
-			// `i` is now the count of elements visited above, and adding it to `matchedCount`
+			// `i` is now the ClassLinksCount of elements visited above, and adding it to `matchedCount`
 			// makes the latter nonnegative.
 			matchedCount += i;
 
@@ -3987,10 +3987,10 @@ jQuery.extend( {
 	when: function( singleValue ) {
 		var
 
-			// count of uncompleted subordinates
+			// ClassLinksCount of uncompleted subordinates
 			remaining = arguments.length,
 
-			// count of unprocessed arguments
+			// ClassLinksCount of unprocessed arguments
 			i = remaining,
 
 			// subordinate fulfillment _data
@@ -5107,7 +5107,7 @@ function returnFalse() {
 // So expect focus to be synchronous when the element is already active,
 // and blur to be synchronous when the element is not already active.
 // (focus and blur are always synchronous in other supported browsers,
-// this just defines when we can count on it).
+// this just defines when we can ClassLinksCount on it).
 function expectSync( elem, type ) {
 	return ( elem === safeActiveElement() ) === ( type === "focus" );
 }

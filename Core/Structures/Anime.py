@@ -19,6 +19,16 @@ class ReleaseStatus(Enum):
     Suspended = 6
     WorkInProgress = 7
 
+    def to_db(self, database: Database):
+        # No need to look for matches, as if the hash matches,
+        # it means its the same AgeRating
+        database.graph.add_node(self.__hash__(), data_class='ReleaseStatus',
+                                label=self.name, raw=self)
+        return self.__hash__()
+
+    def __hash__(self):
+        string = f"{self.name}"
+        return str(hashlib.md5(string.encode()).hexdigest())
 
 class RelationType(Enum):
     UNKNOWN = 0
@@ -52,15 +62,17 @@ class AgeRating:
     # PG-13, R, ...
     Tag: str
     # Country the tag is valid in
-    Country: str
+    Country: str = None
 
-    def convert(self, database: Database):
-        database.graph.add_node(self.__hash__(),
-                                raw=self)
+    def to_db(self, database: Database):
+        # No need to look for matches, as if the hash matches,
+        # it means its the same AgeRating
+        database.graph.add_node(self.__hash__(), data_class='AgeRating',
+                                label=self.Tag, raw=self)
         return self.__hash__()
 
     def __hash__(self):
-        string = f"{self.Age}, {self.Tag}, {self.Country}"
+        string = f"{self.Age}{self.Tag}{self.Country}"
         return hashlib.md5(string.encode()).hexdigest()
 
 @dataclass
@@ -73,6 +85,13 @@ class Tag:
     name: str
     aliases: List[str] = field(default_factory=list)
 
+    def to_db(self, database: Database):
+        # No need to look for matches, as if the hash matches,
+        # it means its the same AgeRating
+        database.graph.add_node(self.__hash__(), data_class='Tag',
+                                label=self.name, raw=self)
+        return self.__hash__()
+
     def __hash__(self):
         string = f"{self.name}"
         return hashlib.md5(string.encode()).hexdigest()
@@ -80,6 +99,12 @@ class Tag:
 @dataclass
 class Tags():
     list: List[Tag] = field(default_factory=list)
+    def __post_init__(self):
+        self.hash = self.__hash__()
+
+    def __hash__(self):
+        string: str = str(random.getrandbits(128))
+        return hashlib.md5(string.encode()).hexdigest()
 
 
 @dataclass
@@ -87,8 +112,15 @@ class Audio:
     name: str
     link: str
 
+    def to_db(self, database: Database):
+        # No need to look for matches, as if the hash matches,
+        # it means its the same AgeRating
+        database.graph.add_node(self.__hash__(), data_class='Audio',
+                                label=self.name, raw=self)
+        return self.__hash__()
+
     def __hash__(self):
-        string = f"{self.name},{self.link}"
+        string = f"{self.name}{self.link}"
         return hashlib.md5(string.encode()).hexdigest()
 
 
@@ -135,7 +167,12 @@ class Song:
 
 @dataclass
 class VoiceActor(Person):
-    pass
+    def to_db(self, database: Database):
+        # No need to look for matches, as if the hash matches,
+        # it means its the same AgeRating
+        database.graph.add_node(self.__hash__(), data_class='VoiceActor',
+                                label=self.name, raw=self)
+        return self.__hash__()
 
 @dataclass
 class VoiceActors():
@@ -155,8 +192,15 @@ class CrossReference:
     url: str
     id: str
 
+    def to_db(self, database: Database):
+        # No need to look for matches, as if the hash matches,
+        # it means its the same AgeRating
+        database.graph.add_node(self.__hash__(), data_class='CrossReference',
+                                label=f"{self.namespace}: {self.id}", raw=self)
+        return self.__hash__()
+
     def __hash__(self):
-        string = f"{self.namespace}, {self.url}, {self.id}"
+        string = f"{self.namespace}{self.url}{self.id}"
         return hashlib.md5(string.encode()).hexdigest()
 
 
@@ -164,9 +208,23 @@ class CrossReference:
 class CrossReferences():
     list: List[CrossReference] = field(default_factory=list)
 
+@dataclass()
+class Description():
+    Text: str = ''
+    def __post_init__(self):
+        self.hash = self.__hash__()
 
-class Description(str):
-    pass
+    def to_db(self, database: Database):
+        # No need to look for matches, as if the hash matches,
+        # it means its the same AgeRating
+        database.graph.add_node(self.hash, data_class='Description',
+                                label="", raw=self)
+        return self.hash
+
+    def __hash__(self):
+        string: str = str(random.getrandbits(128))
+        return hashlib.md5(string.encode()).hexdigest()
+
 
 
 class AnimeType(Enum):
@@ -181,6 +239,13 @@ class AnimeType(Enum):
     TV = 8
     WEB = 9
 
+    def to_db(self, database: Database):
+        # No need to look for matches, as if the hash matches,
+        # it means its the same AgeRating
+        database.graph.add_node(self.__hash__(), data_class='AnimeType',
+                                label=self.name, raw=self)
+        return self.__hash__()
+
 
 class VideoType(Enum):
     PROMOTIONAL = 0
@@ -193,6 +258,14 @@ class Video:
     width: int
     height: int
     duration: int
+
+    def to_db(self, database: Database):
+        # No need to look for matches, as if the hash matches,
+        # it means its the same AgeRating
+        database.graph.add_node(self.__hash__(), data_class='Video',
+                                label=f"{self.url.split('/')[-1]}: {self.duration}",
+                                raw=self)
+        return self.__hash__()
 
     def __hash__(self):
         string = f"{self.url}"
@@ -216,34 +289,78 @@ class EpisodeType(Enum):
 
 @dataclass
 class Episode:
-    ageRating: AgeRating
-    names: Names
-    tags: Tags
-    videos: Videos
-    releaseDate: datetime
-    type: EpisodeType
+    ageRating: AgeRating = None
+    names: Names = None
+    tags: Tags = None
+    videos: Videos = None
+    releaseDate: datetime = None
+    type: EpisodeType = None
+    def __post_init__(self):
+        self.hash = self.__hash__()
+
+    def to_db(self, database: Database):
+        # No need to look for matches, as if the hash matches,
+        # it means its the same AgeRating
+        database.graph.add_node(self.hash, data_class='Episode',
+                                label=f"{self.type.name}: {self.names.list[0].Text}",
+                                raw=self)
+        return self.hash
 
     def __hash__(self):
         string: str = str(random.getrandbits(128))
         return hashlib.md5(string.encode()).hexdigest()
 
 @dataclass
-class Episodes():
+class Episodes:
     list: List[Episode] = field(default_factory=list)
+    def __post_init__(self):
+        self.hash = self.__hash__()
 
+    def to_db(self, database: Database):
+        # No need to look for matches, as if the hash matches,
+        # it means its the same AgeRating
+        database.graph.add_node(self.hash, data_class="Episodes", label=len(self.list), raw=Episodes())
+        for episode in self.list:
+            this_hash = str(episode.to_db(database))
+            database.graph.add_edge(self.hash, this_hash)
+        return self.hash
+
+    def __hash__(self):
+        string: str = str(random.getrandbits(128))
+        return hashlib.md5(string.encode()).hexdigest()
 
 @dataclass
 class Running:
     since: datetime
     to: datetime
 
+    def to_db(self, database: Database):
+        # No need to look for matches, as if the hash matches,
+        # it means its the same AgeRating
+        since = to = "Unknown"
+        if self.since:
+            since = self.since.isoformat()
+        if self.to:
+            to = self.to.isoformat()
+        label = f"from:{since} to:{to}"
+        database.graph.add_node(self.__hash__(), data_class='Running',
+                                label=label,
+                                raw=self)
+        return self.__hash__()
+
     def __hash__(self):
-        string = f"{self.since}, {self.to}"
+        string = str(random.getrandbits(128))
         return hashlib.md5(string.encode()).hexdigest()
 
 @dataclass
 class Runnings():
     list: List[Running] = field(default_factory=list)
+    def __post_init__(self):
+        self.hash = self.__hash__()
+
+    def __hash__(self):
+        string: str = str(random.getrandbits(128))
+        return hashlib.md5(string.encode()).hexdigest()
 
 
 @dataclass
@@ -252,22 +369,45 @@ class Rating:
     rank: int = None
     popularity: int = None
 
+    def __post_init__(self):
+        self.hash = self.__hash__()
+
+    def to_db(self, database: Database):
+        # No need to look for matches, as if the hash matches,
+        # it means its the same AgeRating
+        database.graph.add_node(self.hash, data_class='Rating',
+                                label=f"{self.rated}/{self.rank}/{self.popularity}",
+                                raw=self)
+        return self.hash
+
     def __hash__(self):
         string: str = str(random.getrandbits(128))
         return hashlib.md5(string.encode()).hexdigest()
 
 class Seasons(Enum):
-    Winter = 0
-    Spring = 1
-    Summer = 2
-    Fall = 3
+    Unknown = 0
+    Winter = 1
+    Spring = 2
+    Summer = 3
+    Fall = 4
 
 
-class Season(str):
-    def __init__(self, Year: int = 0, SeasonName: Seasons = Seasons.Winter):
+class Season:
+    def __init__(self, Year: int = 0, SeasonName: Seasons = Seasons.Unknown):
         super().__init__()
         self.Year: int = Year
         self.SeasonName: Seasons = SeasonName
+
+    def to_db(self, database: Database):
+        # No need to look for matches, as if the hash matches,
+        # it means its the same AgeRating
+        database.graph.add_node(self.__hash__(), data_class='Season',
+                                label=str(self), raw=self)
+        return self.__hash__()
+
+    def __hash__(self):
+        string = f"{str(self)}"
+        return hashlib.md5(string.encode()).hexdigest()
 
     def __repr__(self):
         return self.__str__()
@@ -279,6 +419,15 @@ class Season(str):
 @dataclass
 class Studio:
     names: Names
+    def __post_init__(self):
+        self.hash = self.__hash__()
+
+    def to_db(self, database: Database):
+        # No need to look for matches, as if the hash matches,
+        # it means its the same AgeRating
+        database.graph.add_node(self.hash, data_class='Studio',
+                                label=self.names.list[0].Text, raw=self)
+        return self.hash
 
     def __hash__(self):
         string: str = str(random.getrandbits(128))
@@ -288,7 +437,12 @@ class Studio:
 @dataclass
 class Studios():
     list: List[Studio] = field(default_factory=list)
+    def __post_init__(self):
+        self.hash = self.__hash__()
 
+    def __hash__(self):
+        string: str = str(random.getrandbits(128))
+        return hashlib.md5(string.encode()).hexdigest()
 
 class LibraryState(Enum):
     Unknown = 0
@@ -302,8 +456,18 @@ class LibraryState(Enum):
 @dataclass
 class LibraryStatus:
     state: LibraryState
-    episodesWatched: int
-    lastUpdated: datetime
+    episodesWatched: int = 0
+    lastUpdated: datetime = datetime.utcfromtimestamp(0.)
+    def __post_init__(self):
+        self.hash = self.__hash__()
+
+    def to_db(self, database: Database):
+        # No need to look for matches, as if the hash matches,
+        # it means its the same AgeRating
+        database.graph.add_node(self.hash, data_class='LibraryStatus',
+                                label=f"{self.state.name}/{self.episodesWatched}",
+                                raw=self)
+        return self.hash
 
     def __hash__(self):
         string: str = str(random.getrandbits(128))
@@ -332,102 +496,202 @@ class Anime:
     runnings: Runnings = field(default_factory=Runnings)
     season: Season = field(default_factory=Season)
     studios: Studios = field(default_factory=Studios)
+    def __post_init__(self):
+        self.hash = self.__hash__()
 
     def __hash__(self):
         string: str = str(random.getrandbits(128))
         return hashlib.md5(string.encode()).hexdigest()
 
 
-def convert(anime: Anime, database: Database):
-    # Todo: maybe add Class atribute?
-    hash_list = []
-    if anime.ageRating:
-        this_hash = str(anime.ageRating.__hash__())
-        database.graph.add_node(this_hash, data=anime.ageRating)
-        hash_list.append(this_hash)
-    if anime.status:
-        this_hash = str(anime.status.name.__hash__())
-        database.graph.add_node(this_hash, data=anime.status.name)
-        hash_list.append(this_hash)
-    if anime.publicRating:
-        this_hash = str(anime.publicRating.__hash__())
-        database.graph.add_node(this_hash, data=anime.publicRating)
-        hash_list.append(this_hash)
-    if anime.libraryStatus:
-        this_hash = str(anime.libraryStatus.__hash__())
-        database.graph.add_node(this_hash, data=anime.libraryStatus)
-        hash_list.append(this_hash)
-    if anime.personalRating:
-        this_hash = str(anime.personalRating.__hash__())
-        database.graph.add_node(this_hash, data=anime.personalRating)
-        hash_list.append(this_hash)
-    if anime.description:
-        this_hash = str(anime.description.__hash__())
-        database.graph.add_node(this_hash, data=anime.description)
-        hash_list.append(this_hash)
-    if anime.type:
-        this_hash = str(anime.type.name.__hash__())
-        database.graph.add_node(this_hash, data=anime.type)
-        hash_list.append(this_hash)
-    if anime.season:
-        this_hash = str(anime.season.__hash__())
-        database.graph.add_node(this_hash, data=anime.season)
-        hash_list.append(this_hash)
-    for metaid in anime.id.list:
-        this_hash = str(metaid.__hash__())
-        database.graph.add_node(this_hash, data=metaid)
-        hash_list.append(this_hash)
-    for name in anime.names.list:
-        this_hash = str(name.__hash__())
-        database.graph.add_node(this_hash, data=name)
-        hash_list.append(this_hash)
-    for image in anime.images.list:
-        this_hash = str(image.__hash__())
-        database.graph.add_node(this_hash, data=image)
-        hash_list.append(this_hash)
-    for tag in anime.tags.list:
-        this_hash = str(tag.__hash__())
-        database.graph.add_node(this_hash, data=tag)
-        hash_list.append(this_hash)
-    for audio in anime.soundtracks.list:
-        this_hash = str(audio.__hash__())
-        database.graph.add_node(this_hash, data=audio)
-        hash_list.append(this_hash)
-    for voiceactor in anime.voiceActors.list:
-        this_hash = str(voiceactor.__hash__())
-        database.graph.add_node(this_hash, data=voiceactor)
-        hash_list.append(this_hash)
-    for crossref in anime.crossRefs.list:
-        this_hash = str(crossref.__hash__())
-        database.graph.add_node(this_hash, data=crossref)
-        hash_list.append(this_hash)
-    for video in anime.videos.list:
-        this_hash = str(video.__hash__())
-        database.graph.add_node(this_hash, data=video)
-        hash_list.append(this_hash)
-    for episode in anime.episodes.list:
-        this_hash = str(episode.__hash__())
-        database.graph.add_node(this_hash, data=episode)
-        hash_list.append(this_hash)
-    for running in anime.runnings.list:
-        this_hash = str(running.__hash__())
-        database.graph.add_node(this_hash, data=running)
-        hash_list.append(this_hash)
-    for studio in anime.studios.list:
-        this_hash = str(studio.__hash__())
-        database.graph.add_node(this_hash, data=studio)
-        hash_list.append(this_hash)
+    def to_db(self, database: Database):
+        # Todo: maybe add Class atribute?
+        # Todo: When adding to the database see if another exists
+        #  see the diferences (like going from scheduled to airing)
+        #  and call the appropriate flags
+        hash_list: List[str] = []
+    
+        if self.ageRating:
+            this_hash = self.ageRating.to_db(database)
+            hash_list.append(this_hash)
+    
+        if self.status:
+            this_hash = str(self.status.to_db(database))
+            hash_list.append(this_hash)
+    
+        if self.publicRating:
+            this_hash = str(self.publicRating.to_db(database))
+            hash_list.append(this_hash)
+    
+        if self.libraryStatus:
+            this_hash = str(self.libraryStatus.to_db(database))
+            hash_list.append(this_hash)
+    
+        if self.personalRating:
+            this_hash = str(self.personalRating.to_db(database))
+            hash_list.append(this_hash)
+    
+        if self.description:
+            this_hash = str(self.description.to_db(database))
+            hash_list.append(this_hash)
+    
+        if self.type:
+            this_hash = self.type.to_db(database)
+            hash_list.append(this_hash)
+    
+        if self.season:
+            this_hash = str(self.season.to_db(database))
+            hash_list.append(this_hash)
 
-    anime_hash = str(anime.__hash__())
-    database.graph.add_node(anime_hash, data_class="Anime", label=anime.names.list[0].Text)
-    for hash in hash_list:
-        database.graph.add_edge(anime_hash, hash)
+        if self.episodes:
+            this_hash = str(self.episodes.to_db(database))
+            hash_list.append(this_hash)
+    
+        if self.id:
+            this_hash = str(self.id.to_db(database))
+            hash_list.append(this_hash)
+    
+        for name in self.names.list:
+            this_hash = str(name.to_db(database))
+            hash_list.append(this_hash)
+    
+        for image in self.images.list:
+            this_hash = str(image.to_db(database))
+            hash_list.append(this_hash)
+    
+        for tag in self.tags.list:
+            this_hash = str(tag.to_db(database))
+            hash_list.append(this_hash)
+    
+        for audio in self.soundtracks.list:
+            this_hash = str(audio.to_db(database))
+            hash_list.append(this_hash)
+    
+        for voiceactor in self.voiceActors.list:
+            this_hash = str(voiceactor.to_db(database))
+            hash_list.append(this_hash)
+    
+        for crossref in self.crossRefs.list:
+            this_hash = str(crossref.to_db(database))
+            hash_list.append(this_hash)
+    
+        for video in self.videos.list:
+            this_hash = str(video.to_db(database))
+            hash_list.append(this_hash)
+    
+        for running in self.runnings.list:
+            this_hash = str(running.to_db(database))
+            hash_list.append(this_hash)
+    
+        for studio in self.studios.list:
+            this_hash = str(studio.to_db(database))
+            hash_list.append(this_hash)
 
-    return anime_hash
+        database.graph.add_node(self.hash, data_class="Anime", label=self.names.list[0].Text)
+        for hash in hash_list:
+            database.graph.add_edge(self.hash, hash)
+    
+        return self.hash
 
-    # Note To Self: I was converting an anime to the graph.
-    #  Currently it doesnt return a hash like i would like to.
-    #  gotta investistigate how to achieve this.
-    #  i decided to use the hash(data) as the input,
-    #  and ill use node attributes to add data
+def from_db(node_hash: str, database: Database)-> Anime:
+    anime_node = database.graph.nodes[node_hash]
+    info_nodes = database.graph.successors(node_hash)
+
+    def getClass(node_list, check_class):
+        matches = []
+        node_matches = []
+        for node in node_list:
+            info = node["info"]["raw"]
+            if type(info) == check_class:
+                matches.append(info)
+                node_matches.append(node["hash"])
+        return matches, node_matches
+
+    def dump_info(node_hashes):
+        info_dump = []
+        for hash in node_hashes:
+            info = database.graph.nodes[hash]
+            info_dump.append({"info": info, "hash": hash})
+        return info_dump
+
+    info_dump = dump_info(info_nodes)
+
+
+    PureAnime = Anime()
+    PureAnime.hash = node_hash
+
+    ageRating, node_hash = getClass(info_dump, AgeRating)
+    if ageRating:
+        PureAnime.ageRating = ageRating[0]
+    status, node_hash = getClass(info_dump, ReleaseStatus)
+    if status:
+        PureAnime.status = status[0]
+    publicRating, node_hash = getClass(info_dump, Rating)
+    if publicRating:
+        PureAnime.publicRating = publicRating[0]
+    libraryStatus, node_hash = getClass(info_dump, LibraryStatus)
+    if libraryStatus:
+        PureAnime.libraryStatus = libraryStatus[0]
+    personalRating, node_hash = getClass(info_dump, Rating)
+    if personalRating:
+        PureAnime.personalRating = personalRating[0]
+    description, node_hash = getClass(info_dump, Description)
+    if description:
+        PureAnime.description = description[0]
+    animeType, node_hash = getClass(info_dump, AnimeType)
+    if animeType:
+        PureAnime.type = animeType[0]
+    season = getClass(info_dump, Season)
+    if season:
+        PureAnime.season = season
+
+    metaids, node_hash = getClass(info_dump, MetaIDs)
+    if node_hash:
+        node_hashes = database.graph.successors(node_hash[0])
+        nodes = dump_info(node_hashes)
+        metaid, node_hash2 = getClass(nodes, MetaID)
+        PureAnime.id = MetaIDs()
+        # setting the hash so info doesnt repeat
+        PureAnime.id.hash = node_hash[0]
+        PureAnime.id.list = metaid
+
+    episodes, node_hash = getClass(info_dump, Episodes)
+    if node_hash:
+        node_hashes = database.graph.successors(node_hash[0])
+        nodes = dump_info(node_hashes)
+        episode, node_hash2 = getClass(nodes, MetaID)
+        PureAnime.episodes = Episodes()
+        # setting the hash so info doesnt repeat
+        PureAnime.episodes.hash = node_hash[0]
+        PureAnime.episodes.list = episode
+
+
+    # Todo: Text is not OK!
+    # name = getClass(info_dump, MetaID)
+    # if name:
+    #     PureAnime.names.list = name
+    # image = getClass(info_dump, MetaID)
+    # if image:
+    #     PureAnime.images.list = image
+    # tag = getClass(info_dump, MetaID)
+    # if tag:
+    #     PureAnime.tags.list = tag
+    # audio = getClass(info_dump, MetaID)
+    # if audio:
+    #     PureAnime.soundtracks.list = audio
+    # voiceactor = getClass(info_dump, MetaID)
+    # if voiceactor:
+    #     PureAnime.voiceActors.list = voiceactor
+    # crossref = getClass(info_dump, MetaID)
+    # if crossref:
+    #     PureAnime.crossRefs.list = crossref
+    # video = getClass(info_dump, MetaID)
+    # if video:
+    #     PureAnime.videos.list = video
+
+    return PureAnime
+
+    # Note To Self: I was separating each conversion
+    #  into each class
+    # Note To Self: Next task after that is to get the full anime info after this.
 

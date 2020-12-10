@@ -22,6 +22,13 @@ class Person():
     gender: Gender
     country: str
 
+    def to_db(self, database: Database):
+        # No need to look for matches, as if the hash matches,
+        # it means its the same AgeRating
+        database.graph.add_node(self.__hash__(), data_class='Person',
+                                label=self.name, raw=self)
+        return self.__hash__()
+
     def __hash__(self):
-        string = f"{self.name}, {self.birthday}"
+        string = f"{self.name}"
         return hashlib.md5(bytes(string, 'utf-8')).hexdigest()

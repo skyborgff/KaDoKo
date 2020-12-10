@@ -1,7 +1,7 @@
 from enum import Enum
 
-class FeatureFlags (Enum):
+class MetadataFlag (Enum):
     MetadataLinker = 0
 
-class CallFlags (Enum):
+class CallFlag (Enum):
     WatchStateChange = 0

@@ -1,0 +1,364 @@
+<template>
+  <div>
+    <div fluid id="3d-graph"></div>
+    <div style="position: absolute; top: 5px; left: 5px;">
+      <button id="animationToggle" style="margin: 8px; height: 30px; width: 150px;">
+        Pause Animation
+      </button>
+      <button id="animationRestart" style="margin: 8px; height: 30px; width: 150px;">
+        Animate More
+      </button>
+    </div>
+  </div>
+</template>
+
+<script>
+  /* eslint-disable */
+  // https://github.com/vasturiano/3d-force-graph
+  // https://github.com/vasturiano/force-graph
+  // https://github.com/vasturiano/d3-force-registry
+
+  import axios from 'axios';
+  import ForceGraph3D from '3d-force-graph';
+  import ForceGraph from 'force-graph';
+  import * as d3 from 'd3-force-3d';  // eslint-disable-line no-unused-vars
+  import * as d3Sampled from 'd3-force-sampled';  // eslint-disable-line no-unused-vars
+  import * as THREE from 'three';  // eslint-disable-line no-unused-vars
+  import * as dat from 'dat.gui';
+
+  export default {
+    name: "DataGraph",
+    data: function () {
+      return {
+        nodes: [],
+        links: [],
+        nodesById: [],
+        count: {},
+        graph_data: {},
+        Class_dict: {
+          "Anime": {"color": "Yellow", "radius": 3, "radius3": 20, "distance": 10000, "s_radial": 0.3, "s_radial3": 0.3},
+          "AnimeList": {
+            "color": "Green",
+            "radius": 5,
+            "radius3": 5,
+            "distance": 500,
+            "s_radial": 0.05,
+            "s_radial3": 0.1
+          },
+          "AnimeLists": {
+            "color": "Green",
+            "radius": 20,
+            "radius3": 10,
+            "distance": 0,
+            "s_radial": 0.05,
+            "s_radial3": 0.1
+          },
+          // "Tag": {"color": "Cyan", "radius": 0.5, "radius3": 1, "distance": 000, "s_radial": 0.001},
+          "Other": {
+            "color": "Cyan",
+            "radius": 0.5,
+            "radius3": 1,
+            "distance": 15000,
+            "s_radial": 0.001,
+            "s_radial3": 0.001
+          }
+        },
+        graph_type: this.$route.params.graph_type,
+      }
+    },
+    mounted: function () {
+      this.get_graph();
+    },
+    methods: {
+      get_graph() {
+        const path = 'http://localhost:8283/force/force.json';
+        axios.get(path).then((res) => this.display_graph(res));
+      },
+      display_graph(res) {
+        const start = new Date()
+        this.graph_data = res.data;
+        this.nodes = this.graph_data['nodes'];
+        this.links = this.graph_data['links'];
+
+        const links = this.links.map(r => {
+          return {
+            source: r['source'].toString(),
+            target: r['target'].toString()
+          }
+        });
+        window.console.log(links.length + " links loaded " + (new Date() - start) + " ms.")
+        const ids = new Set();
+        links.forEach(l => {
+          ids.add(l.source);
+          ids.add(l.target);
+        });
+        var rootId = null;
+
+        const nodes = Array.from(this.nodes).map(node => {
+          return {
+            id: node["id"].toString(),
+            data_class: this.ClassLabel(node)[0],
+            label: this.ClassLabel(node)[1],
+            radius: this.ClassData(node, "radius"),
+            radius3: this.ClassData(node, "radius3"),
+            area: 3.14 * this.ClassData(node, "radius") ** 2,
+            volume: 4 / 3 * 3.14 * this.ClassData(node, "radius3") ** 3,
+            distance: this.ClassData(node, "distance"),
+            collapsed: this.ClassLabel(node)[0] !== "AnimeLists",
+            // collapsed: false,
+            childLinks: [],
+          }
+        });
+        for (var node_id in this.nodes) {
+          // if (this.ClassLabel(this.nodes[node_id])[0] === "AnimeList"){
+          //   rootId.push(this.nodes[node_id].id)
+          // }
+          if (this.ClassLabel(this.nodes[node_id])[0] === "AnimeLists") {
+            rootId = this.nodes[node_id].id
+          }
+          // if (this.ClassLabel(this.nodes[node_id])[0] === "AnimeList") {
+          //   rootId.push(this.nodes[node_id].id)
+          // }
+        }
+
+        const gData = {nodes: nodes, links: links};
+
+        // link parent/children
+        var nodesById = Object.fromEntries(gData.nodes.map(node => [node.id, node]));
+        gData.links.forEach(link => {
+          nodesById[link.source].childLinks.push(link);
+        });
+        this.nodesById = nodesById;
+
+        var count = {};
+        for (var link_id in gData.links) {
+          var link = gData.links[link_id]
+          count[link.source] = (count[link.source] || 0) + 1;
+          count[link.target] = (count[link.target] || 0) + 1;
+        }
+        this.count = count;
+
+        const getPrunedTree = () => {
+          const visibleNodes = [];
+          const visibleLinks = [];
+
+          (function traverseTree(node = nodesById[rootId]) {
+            visibleNodes.push(node);
+            if (node.collapsed) return;
+            visibleLinks.push(...node.childLinks);
+            node.childLinks
+              .map(link => ((typeof link.target) === 'object') ? link.target : nodesById[link.target]) // get child node
+              .forEach(traverseTree);
+          })(); // IIFE
+
+
+          return {nodes: visibleNodes, links: visibleLinks};
+        };
+
+        var elem = document.getElementById('3d-graph')
+
+        function toggle_visibility(visible) {
+          console.log(visible);
+          gData.nodes.forEach(nodeindex => {
+            var node = nodesById[nodeindex.id];
+            if (node.collapsed === visible) {
+              if (node.data_class !== "AnimeLists") {
+                node.collapsed = !visible;
+                node.x = (Math.random() - 0.5) * node.distance * 2;
+                node.y = (Math.random() - 0.5) * node.distance * 2;
+                node.z = (Math.random() - 0.5) * node.distance * 2;
+                node.vx = 0;
+                node.vy = 0;
+                node.vz = 0;
+              }
+            }
+          });
+          Graph.graphData(getPrunedTree())
+        }
+
+        var toggle = {
+          ShowAll: function () {
+            toggle_visibility(true)
+          },
+          HideAll: function () {
+            toggle_visibility(false)
+          }
+        };
+        const gui = new dat.GUI();
+        gui.add(toggle, 'ShowAll');
+        gui.add(toggle, 'HideAll');
+
+        var Graph = null;
+        var rel_size = 10; // eslint-disable-line no-unused-vars
+        window.devicePixelRatio = 1;
+
+
+        if (this.graph_type === "3D") {
+                    rel_size = 10; // eslint-disable-line no-unused-vars
+          Graph = ForceGraph3D()(elem).graphData(getPrunedTree())
+            .d3AlphaDecay(0)
+            .d3VelocityDecay(0.3)
+            // .warmupTicks(600)
+            .warmupTicks(0)
+            .cooldownTime(100000)
+            .nodeVal('volume')
+            // .nodeResolution(1)
+            // .linkDirectionalArrowResolution(3)
+            .linkDirectionalArrowLength(20)
+            .d3Force("radial", d3.forceRadial().radius(d => this.ClassData(d, "distance") / 2).strength(d => this.ClassData(d, "s_radial3")))
+            .d3Force('link', d3.forceLink().strength(link => this.LinkStatus(link)[0]).id(d => d.id).distance(link => this.LinkStatus(link)[1]))
+            .d3Force('center', d3.forceCenter().strength(0.02))
+            .d3Force('collision', d3.forceCollide(node => node.radius3 * rel_size).strength(1))
+            // .d3Force('radial', null)
+            // .d3Force('link', null)
+            // .d3Force('center', null)
+            // .d3Force('collision', null)
+            .d3Force('charge', null)
+
+
+        } else {
+          Graph = ForceGraph()(elem).graphData(getPrunedTree())
+            .zoom(0.05, 0)
+            .d3AlphaDecay(0)
+            .d3VelocityDecay(0.3)
+            // .warmupTicks(600)
+            .warmupTicks(0)
+            .cooldownTime(100000)
+            .nodeVal('area')
+            .linkDirectionalArrowLength(6)
+            .d3Force('collision', d3.forceCollide(node => node.radius * rel_size).strength(1))
+            .d3Force('center', d3.forceCenter(0, 0).strength(0.02))
+            .d3Force("charge", d3Sampled.forceManyBodySampled().strength(-0.1).distanceMax(10000))
+            .d3Force('link', d3.forceLink().strength(link => this.LinkStatus(link)[0]).id(d => d.id).distance(link => this.LinkStatus(link)[1]))
+            .d3Force("radial", d3.forceRadial().radius(d => this.ClassData(d, "distance")).strength(d => this.ClassData(d, "s_radial")))
+            // .d3Force('collision', null)
+            // .d3Force('center', null)
+            // .d3Force('charge', null)
+            // .d3Force('link', null)
+            // .d3Force('radial', null)
+        }
+
+        Graph
+          .linkDirectionalArrowRelPos(1)
+          .nodeAutoColorBy('data_class')
+          .nodeLabel(node => `${node.data_class}\n ${node.label}`)
+          .onNodeHover(node => elem.style.cursor = node ? 'pointer' : null)
+          .onEngineStop(() => Graph.zoomToFit(400))
+          .onNodeClick(node => {
+            if (node.childLinks.length) {
+              node.collapsed = !node.collapsed;
+              Graph.graphData(getPrunedTree());
+            }
+          })
+          .onNodeDragEnd(node => {
+            node.fx = node.x;
+            node.fy = node.y;
+            node.fz = node.z;
+          })
+          .onNodeRightClick(node => {
+            delete node.fx;
+            delete node.fy;
+            delete node.fz;
+          })
+        ;
+
+        let isAnimationActive = true;
+        document.getElementById('animationToggle').addEventListener('click', event => {
+          isAnimationActive ? Graph.pauseAnimation() : Graph.resumeAnimation();
+
+          isAnimationActive = !isAnimationActive;
+          event.target.innerHTML = `${(isAnimationActive ? 'Pause' : 'Resume')} Animation`;
+        });
+        document.getElementById('animationRestart').addEventListener('click', function() {
+          Graph.d3ReheatSimulation()
+        });
+      },
+      LinkStatus(link) {
+        var source = link.source;
+        var target = link.target;
+
+        var source_node = this.nodesById[source.id];
+        var target_node = this.nodesById[target.id];
+
+        var source_class = this.ClassLabel(source_node)[0];// eslint-disable-line no-unused-vars
+        var target_class = this.ClassLabel(target_node)[0];// eslint-disable-line no-unused-vars
+
+        var source_count = this.count[source.id];// eslint-disable-line no-unused-vars
+        var target_count = this.count[target.id];// eslint-disable-line no-unused-vars
+
+        var s_base = 0.01;
+        var d_base = 1000;
+
+        s_base = s_base / target_count;
+
+        var allowed_class1 = ["AnimeList", "AnimeLists"]// eslint-disable-line no-unused-vars
+        var allowed_class2 = ["Episodes"]// eslint-disable-line no-unused-vars
+        var allowed_class3 = ["Anime"]// eslint-disable-line no-unused-vars
+        var allowed_class4 = ["Tag"]// eslint-disable-line no-unused-vars
+
+        if (allowed_class1.includes(source_class)) {
+          d_base = 10000
+          s_base = 0
+        }
+
+        if (allowed_class4.includes(target_class)) {
+          d_base = 2000
+          s_base = 0.001
+        }
+        if (source_class === "Anime" && target_class !== "Tag"){
+          d_base = 100
+          s_base = 0.01
+        }
+        if (target_class === "Anime"){
+          d_base = 11000
+          s_base = 0.01
+        }
+        if (source_class==="Episodes") {
+          d_base = 30
+          s_base = 0.01
+        }
+        if (source_class === "Anime") {
+          d_base = 10
+          s_base = 0.01
+        }
+        if (target_class==="Episodes") {
+          d_base = 300
+          s_base = 0.01
+        }
+
+        return [s_base, d_base]
+      },
+      ClassLabel(d) {
+        var classes = "";
+        var label = "";
+        if ("data_class" in d) {
+          classes = d.data_class;
+          label = d.label
+        } else {
+          if ("data" in d) {
+            if ("py/object" in d.data) {
+              classes = d.data["py/object"]
+            }
+            if ("py/type" in d.data) {
+              classes = d.data["py/type"]
+            }
+          }
+        }
+        return [classes, label];
+      },
+      ClassData(d, data) {
+        var processed_data = this.Class_dict[d.data_class] ? this.Class_dict[d.data_class][data] : this.Class_dict["Other"][data]
+        return processed_data
+      },
+    },
+
+  }
+
+
+</script>
+
+<style>
+  .dg.a {
+    margin-top: 50px !important;
+  }
+</style>
