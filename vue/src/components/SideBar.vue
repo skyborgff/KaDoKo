@@ -71,7 +71,7 @@
    cursor: pointer;
  }
     sidebarMenu{
-    height: 100%;
+    /*height: 100%;*/
       position: absolute;
   }
 

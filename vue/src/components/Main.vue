@@ -1,10 +1,10 @@
 <template>
 
-<main class="container-fluid h-100" >
+<main class="container-fluid fill-height h-100" >
       <NavBar />
-    <div class="row bg-dark h-100">
+    <div class="row fluid fill-height bg-dark h-100">
         <SideBar />
-        <div role="main" class="col px-md-4 bg-dark text-light flex-grow-1 h-100">
+        <div role="main" class="col px-md-4 bg-dark text-light flex-grow-1 fill-height">
             <router-view></router-view>
         </div>
     </div>
@@ -29,5 +29,10 @@ export default {
 <style>
     main{
         padding-top: 40px;
+        background: var(--gray-dark);
+    }
+    div[role=main]{
+        margin-top: 10px;
+        margin-bottom: 10px;
     }
 </style>

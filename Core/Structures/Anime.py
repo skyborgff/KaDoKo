@@ -76,7 +76,7 @@ class AgeRating:
         return hashlib.md5(string.encode()).hexdigest()
 
 @dataclass
-class Universe(MetaIDs):
+class Universe:
     names: Names = field(default_factory=Names)
 
 

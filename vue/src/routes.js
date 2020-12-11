@@ -2,7 +2,7 @@ import Main from "./components/Main";
 import Options from "./components/Setup/Options";
 import Setup from "./components/Setup/Setup";
 import Authenticate from "./components/Setup/Authenticate";
-import DataGraph from "./components/Debug/DataGraph";
+import DataGraph from "./components/Debug/DataGraph3d2";
 // import Dashboard from "./components/Dashboard";
 import Calendar from "./components/Calendar";
 // import MAL from "./components/Settings/MAL";
