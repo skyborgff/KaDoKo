@@ -1,7 +1,6 @@
 from Core.Plugins.Base.BaseLibrary import BaseLibrary
 from Core.Plugins.Base.BaseMetadata import BaseMetadata
 from Core.Plugins.Base.Auth.OAuth import OAuth
-from time import time
 import requests
 import json
 from ratelimiter import RateLimiter
@@ -68,7 +67,7 @@ class MAL(BaseLibrary, BaseMetadata):
         for node_hash in node_hash_list:
             node = database.graph.nodes[node_hash]
             if node["data_class"] == "Anime":
-                oldAnimeData = AnimeStruct.from_db(node_hash, database)
+                oldAnimeData = AnimeStruct.Anime.from_db(node_hash, database)
                 if oldAnimeData.id.getID("MAL"):
                     malID = oldAnimeData.id.getID("MAL")
                     print(f"MAL: Obtaining Anime Metadata: {malID}")

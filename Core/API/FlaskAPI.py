@@ -1,12 +1,14 @@
 from flask import Flask, jsonify, request, send_file, send_from_directory
 from flask_cors import CORS, cross_origin
 import os
-
+import multiprocessing
 
 class FlaskAPI:
     def __init__(self, kadoki):
+        print('Starting Flask Server')
+
         # configuration
-        DEBUG = True
+        DEBUG = False
 
         # instantiate the app
         self.app = Flask(__name__, static_folder="FlaskFiles")
@@ -16,6 +18,7 @@ class FlaskAPI:
         CORS(self.app, resources={r'/*': {'origins': '*'}})
 
         self.kadoki = kadoki
+
 
         # sanity check route
         @self.app.route('/ping', methods=['GET'])
@@ -58,4 +61,5 @@ class FlaskAPI:
         @self.app.route('/force/<path:path>')
         def send_force(path):
             self.kadoki.database.generate_graph("Core/API/FlaskFiles/force/force.json")
+            print('Sending Graph')
             return send_from_directory('FlaskFiles/force', path)

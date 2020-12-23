@@ -2,7 +2,7 @@ from Core.Structures.Generic import *
 from dataclasses import dataclass
 
 
-class Gender(Enum):
+class Gender(Hashed, Enum):
     UNKNOWN = 0
     UNDEFINED = 1
     OTHER = 2
@@ -13,22 +13,23 @@ class Gender(Enum):
     MALE = 7
     MALE_TRAP = 8
 
+    def to_db(self, database: Database):
+        return database.add_node(self, label=self.name, raw=True)
+
+    def hashSeed(self):
+        return f"{self.name}{type(self).__name__}"
+
 
 @dataclass
-class Person():
-    MetaIDs: MetaIDs
+class Person(Hashed):
     name: str
     birthday: str
     gender: Gender
     country: str
+    age: int
 
     def to_db(self, database: Database):
-        # No need to look for matches, as if the hash matches,
-        # it means its the same AgeRating
-        database.graph.add_node(self.__hash__(), data_class='Person',
-                                label=self.name, raw=self)
-        return self.__hash__()
+        return database.add_node(self, label=self.name, raw=True)
 
-    def __hash__(self):
-        string = f"{self.name}"
-        return hashlib.md5(bytes(string, 'utf-8')).hexdigest()
+    def hashSeed(self):
+        return f"{self.name}{type(self).__name__}"

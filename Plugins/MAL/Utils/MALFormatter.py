@@ -8,8 +8,7 @@ import Core.Structures.Generic as GenericStruct
 DefaultCountry = pycountry.countries.get(name='Japan').name
 DefaultLanguage = pycountry.languages.get(name='Japanese').name
 DefaultScript = pycountry.scripts.get(name='Latin').name
-DefaultLocalization = GenericStruct.Localization(Country=DefaultCountry,
-                                                 Language=DefaultLanguage,
+DefaultLocalization = GenericStruct.Localization(Language=DefaultLanguage,
                                                  Script=DefaultScript)
 
 def AnimeList(List: list):
@@ -129,9 +128,9 @@ def AnimeMetadata(metadata, oldAnime: AnimeStruct.Anime) -> AnimeStruct.Anime:
     ageRatingDict = {"pg_13": 13}
     Anime.ageRating = AnimeStruct.AgeRating(Age=ageRatingDict["pg_13"], Tag=rating)
 
-    status_dict: AnimeStruct.ReleaseStatus = {"currently_airing": AnimeStruct.ReleaseStatus.Ongoing,
-                                              "not_yet_aired": AnimeStruct.ReleaseStatus.Scheduled,
-                                              "finished_airing": AnimeStruct.ReleaseStatus.Completed}
+    status_dict: AnimeStruct.ReleaseStatus = {"currently_airing": AnimeStruct.ReleaseStatus.ONGOING,
+                                              "not_yet_aired": AnimeStruct.ReleaseStatus.SCHEDULED,
+                                              "finished_airing": AnimeStruct.ReleaseStatus.COMPLETED}
     Anime.status = status_dict[status]
 
     Anime.publicRating = AnimeStruct.Rating(rated=mean, rank=rank, popularity=popularity)
@@ -164,17 +163,14 @@ def AnimeMetadata(metadata, oldAnime: AnimeStruct.Anime) -> AnimeStruct.Anime:
         Country = "Unknown"
         Language = pycountry.languages.get(alpha_2=language).name
         Script = "Unknown"
-        Localization = GenericStruct.Localization(Country=Country,
-                                                  Language=Language,
+        Localization = GenericStruct.Localization(Language=Language,
                                                   Script=Script)
         Name = GenericStruct.Text(Text=title, Localization=DefaultLocalization)
         names.list.append(Name)
     for title in synonyms:
-        Country = "Unknown"
         Language = "Unknown"
         Script = "Unknown"
-        Localization = GenericStruct.Localization(Country=Country,
-                                                  Language=Language,
+        Localization = GenericStruct.Localization(Language=Language,
                                                   Script=Script)
         Name = GenericStruct.Text(Text=title, Localization=DefaultLocalization)
         names.list.append(Name)
@@ -199,6 +195,7 @@ def AnimeMetadata(metadata, oldAnime: AnimeStruct.Anime) -> AnimeStruct.Anime:
     Anime.images.hash = oldAnime.images.hash
 
     tags = AnimeStruct.Tags()
+    # Todo: See if exists in database a tag with same name but different aliases
     tags.list = [AnimeStruct.Tag(name=genre.get("name")) for genre in genres]
     Anime.tags = tags
     Anime.tags.hash = oldAnime.tags.hash
@@ -214,17 +211,16 @@ def AnimeMetadata(metadata, oldAnime: AnimeStruct.Anime) -> AnimeStruct.Anime:
                 "movie": AnimeStruct.AnimeType.MOVIE}
     Anime.type = typeDict[media_type]
 
-    episodes = AnimeStruct.Episodes()
-    for episode_number in range(num_episodes):
-        text = AnimeStruct.Text("Unknown")
-        names = AnimeStruct.Names()
-        names = AnimeStruct.Names()
-        names.list.append(text)
-        episode = AnimeStruct.Episode(names=names)
-        episode.type = AnimeStruct.EpisodeType.UNKNOWN
-        episodes.list.append(episode)
-    Anime.episodes = episodes
-    Anime.episodes.hash = oldAnime.episodes.hash
+    # episodes = AnimeStruct.Episodes()
+    # for episode_number in range(num_episodes):
+    #     text = AnimeStruct.Text("Unknown", DefaultLocalization)
+    #     names = AnimeStruct.Names()
+    #     names.list.append(text)
+    #     episode = AnimeStruct.Episode(names=names)
+    #     episode.type = AnimeStruct.EpisodeType.UNKNOWN
+    #     episodes.list.append(episode)
+    # Anime.episodes = episodes
+    # Anime.episodes.hash = oldAnime.episodes.hash
 
     runnings = AnimeStruct.Runnings()
     since = to = None
@@ -245,13 +241,13 @@ def AnimeMetadata(metadata, oldAnime: AnimeStruct.Anime) -> AnimeStruct.Anime:
                   "fall": AnimeStruct.Seasons.Fall}
 
     if start_season:
-        Anime.season = AnimeStruct.Season(Year=year, SeasonName=seasonDict[season])
+        Anime.season = AnimeStruct.Season(Year=AnimeStruct.Year(year), SeasonName=seasonDict[season])
 
     studioss = AnimeStruct.Studios()
     for studio in studios:
         name = studio.get("name")
         names = AnimeStruct.Names()
-        names.list.append(AnimeStruct.Text(Text=name))
+        names.list.append(AnimeStruct.Text(Text=name, Localization=DefaultLocalization))
         studioss.list.append(AnimeStruct.Studio(names))
     Anime.studios = studioss
     Anime.studios.hash = oldAnime.studios.hash

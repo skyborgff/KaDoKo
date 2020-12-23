@@ -13,8 +13,8 @@ class MALHeuristic(BaseHeuristic):
         date = parsedate(response.headers['date'])
         expires = datetime(*date[:6]) + timedelta(weeks=1)
         return {
-            'expires' : formatdate(calendar.timegm(expires.timetuple())),
-            'cache-control' : 'public',
+            'expires': formatdate(calendar.timegm(expires.timetuple())),
+            'cache-control': 'public',
         }
 
     def warning(self, response):
