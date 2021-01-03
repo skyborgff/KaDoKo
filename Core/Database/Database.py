@@ -17,6 +17,7 @@ class Database:
 
 
     def load_graph(self):
+        '''Load the database from disk'''
         os.makedirs(database_folder, exist_ok=True)
         if os.path.exists(database_path):
             self.graph = nx.read_gpickle(database_path)
@@ -24,9 +25,11 @@ class Database:
             self.graph = nx.DiGraph()
 
     def save(self):
+        '''Save the database to disk'''
         nx.write_gpickle(self.graph, database_path)
 
     def generate_graph(self, path):
+        '''Dump the database in readable form to the specified path in order to generate a graph'''
         print('Generating Graph')
         d = json_graph.node_link_data(self.graph)
         data = jsonpickle.encode(d, unpicklable=True, indent=1)
@@ -47,6 +50,7 @@ class Database:
                 self.graph.remove_node(successor)
 
     def getByClass(self, node_class):
+        '''Return a list of all node hashes with the specified class'''
         found = []
         for node_hash in self.graph.nodes:
             node = self.graph.nodes[node_hash]
@@ -57,6 +61,7 @@ class Database:
         return found
 
     def add_node(self, node, label: str, raw: bool = False)-> str:
+        '''Add a node to the database'''
         if raw:
             raw_node = node
         else:
@@ -69,8 +74,5 @@ class Database:
         return n_hash
 
     def add_edge(self, edge1, edge2):
+        '''Add a new edge to the graph'''
         self.graph.add_edge(edge1, edge2)
-
-
-# Note To Self: Pickling stuff for the graph
-# Todo: add the graph into the UI
