@@ -1,21 +1,22 @@
 <template>
   <div id="app">
-
-    <NavBar />
-    <Main />
+    <router-view></router-view>
   </div>
 </template>
 
 <script>
-import NavBar from './components/NavBar.vue'
-import Main from './components/Main.vue'
 
 export default {
   name: 'app',
   components: {
-    NavBar,
-    Main
-  }
+  },
+  data: function() {
+    return {
+      first: false,
+    }
+  },
+  mounted: function() {
+  },
 }
 </script>
 
@@ -34,4 +35,5 @@ export default {
     body{
     height: 100vh;
   }
+
 </style>

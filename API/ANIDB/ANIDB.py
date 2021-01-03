@@ -4,6 +4,7 @@ import os
 import requests
 import difflib
 import eel
+from API.ANIDB.DataClasses.Anime import AnimeInfo
 
 SEARCH_GZ = 'API/ANIDB/anime-titles.xml.gz'
 SEARCH_DB = 'API/ANIDB/anime-titles.xml'
@@ -153,3 +154,7 @@ class Client:
             return anime
         else:
             return
+
+    def get_anime(self, aid):
+        info = self.get_info(aid)
+        return AnimeInfo(info)

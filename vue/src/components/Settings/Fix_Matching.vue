@@ -1,12 +1,12 @@
 <template>
     <div>
         <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
-            <h1 class="h2">Shows</h1>
+            <h1 class="h2">Fix Matches</h1>
         </div>
 
         <div v-for="(anime, index) in Connections" v-bind:key="index">
             <div v-show="parseInt(anime['connected'])==0">
-                <div v-for="(value) in AnimeInfoJson.Total" >
+                <div v-for="(value) in AnimeInfoJson.Total" v-bind:key="value">
                     <div v-if="parseInt(value['node']['id'])==parseInt(anime['ids']['MAL'])">
                         <b-card bg-variant="dark" text-variant="white" :title="value['node']['title']" :sub-title="'MAL ID: ' + value['node']['id']" img-left :img-src="value['node']['main_picture']['medium']">
                             <b-card-text>
@@ -14,7 +14,7 @@
                             </b-card-text>
                             <b-button :href="'https://myanimelist.net/anime/' + value['node']['id']" target="_blank" variant="primary">MAL Anime Link</b-button>
                             <b-form-group stacked>
-                                <div v-for="(anime_name) in anime['name_list']">
+                                <div v-for="(anime_name) in anime['name_list']" v-bind:key="anime_name">
                                     <b-form-radio v-model="selectedAnime[value['node']['id']]" :name="value['node']['title']" :value="anime_name['id']">
                                     <b-link :href="'https://anidb.net/anime/' + anime_name['id']" target="_blank" class="card-link">{{anime_name['name']}}</b-link></b-form-radio>
                                 </div>
@@ -56,7 +56,7 @@ export default {
         }
     },
     mounted: function() {
-        eel.MALConnected()((val) => {
+        window.eel.MALConnected()((val) => {
             this.connected = val;
         });
         this.GetConnections();
@@ -64,7 +64,7 @@ export default {
     },
     methods: {
         ButtonConnect() {
-            eel.MALConnect()((val) => {
+            window.eel.MALConnect()((val) => {
                 if (!this.connected) {
                     window.location.href = val;
                 } else {
@@ -73,16 +73,16 @@ export default {
             })
         },
         ButtonConnectShows(mid, aid) {
-            eel.ConnectShows(mid, aid)((val) => {})
+            window.eel.ConnectShows(mid, aid)()
         },
         MALConnected() {
-            eel.MALConnected()((val) => {
+            window.eel.MALConnected()((val) => {
                 this.connected = val
             })
         },
         MALAnimeInfo() {
             if (this.connected) {
-                eel.MALAnimeInfo()((animelist) => {
+                window.eel.MALAnimeInfo()((animelist) => {
                     if (animelist) {
                         this.AnimeInfoJson = animelist
                     }
@@ -91,7 +91,7 @@ export default {
         },
         GetConnections() {
             if (this.connected) {
-                eel.GetConnections()((Connections) => {
+                window.eel.GetConnections()((Connections) => {
                     if (Connections) {
                         this.Connections = Connections
                     }

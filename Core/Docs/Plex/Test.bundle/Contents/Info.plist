@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+        <key>CFBundleIdentifier</key>
+        <string>com.plexapp.agents.test</string>
+        <key>PlexAgentAttributionText</key>
+        <string>test was created by creator
+          random link: 	&lt;blockquote&gt;&lt;i&gt;&quot;&lt;a href=&quot;http://anidb.net/&quot;&gt;AniDB.net&lt;/a&gt;
+        </string>
+        <key>PlexFrameworkVersion</key>
+        <string>2</string>
+        <key>PlexPluginClass</key>
+        <string>Agent</string>
+</dict>
+</plist>
+
+

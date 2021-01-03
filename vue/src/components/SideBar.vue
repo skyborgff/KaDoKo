@@ -1,6 +1,6 @@
 <template>
   <nav id="sidebarMenu" class="sidebar d-md-block bg-dark text-light border-right border-light" style="max-width: 150px">
-          <div class="sidebar pt-3">
+          <div class="sidebar">
             <ul class="nav flex-column ">
               <li class="nav-item">
                 <router-link class="nav-link" to="/Dashboard">
@@ -25,8 +25,8 @@
 
             <ul class="nav flex-column mb-2 ">
               <li class="nav-item">
-                <router-link class="nav-link" to="/Settings/Shows">
-                  Shows
+                <router-link class="nav-link" to="/Settings/Fix_Matching">
+                  Fix Matching
                 </router-link>
               </li>
               <li class="nav-item">
@@ -50,6 +50,16 @@
                 </router-link>
               </li>
             </ul>
+            <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+              <span>Debug</span>
+            </h6>
+            <ul class="nav flex-column mb-2 ">
+              <li class="nav-item">
+                <router-link class="nav-link" to="/Debug/Graph">
+                  Data Graph
+                </router-link>
+              </li>
+            </ul>
           </div>
   </nav>
 </template>
@@ -61,7 +71,8 @@
    cursor: pointer;
  }
     sidebarMenu{
-    height: 100%;
+    /*height: 100%;*/
+      position: absolute;
   }
 
 </style>
