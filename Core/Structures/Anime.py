@@ -688,6 +688,7 @@ class Anime(Hashed):
 
     @staticmethod
     def from_db(hash: str, database: Database):
+        """Generates an Anime structure from the database starting from an anime node"""
         successors_hashes = database.graph.successors(hash)
         PureAnime = Anime()
         PureAnime.hash = hash
@@ -711,8 +712,9 @@ class Anime(Hashed):
             PureAnime.id = MetaIDs.from_db(node_hash[0], database)
 
         episodes, node_hash = getClass(nodes_info, Episodes)
-        if episodes[0].list:
-            PureAnime.episodes = Episodes.from_db(node_hash[0], database)
+        if episodes:
+            if episodes[0].list:
+                PureAnime.episodes = Episodes.from_db(node_hash[0], database)
 
 
         # Todo: Text is not OK!

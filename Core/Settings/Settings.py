@@ -11,7 +11,24 @@ class Settings:
         self.optional_dbs: list = []
         self.plex = False
         self.first = True
+        self.anime = self.generate_anime_settings()
         self.load()
+
+        # Note To Self: I was going to create settings UI
+
+    def generate_anime_settings(self):
+        anime_fields = ['ageRating', 'status', 'publicRating', 'libraryStatus',
+                        'personalRating', 'id', 'names', 'images', 'tags', 'soundtracks',
+                        'voiceActings', 'crossRefs', 'description', 'type', 'videos',
+                        'episodes', 'runnings', 'season', 'studios']
+
+        anime_settings = {}
+        anime_setting = {'language': None,
+                         'provider': None}
+        for field in anime_fields:
+            anime_settings[field] = anime_setting
+        return anime_settings
+
 
     def save(self):
         settings_file = f'Settings/Core/settings.json'
@@ -20,7 +37,7 @@ class Settings:
                     'optional_libraries': self.optional_libraries,
                     'optional_dbs': self.optional_dbs,
                     'plex': self.plex,
-                    'first': self.first,
+                    'anime': self.anime
                     }
         with open(settings_file, 'w+') as file:
             os.makedirs('Settings/Core', exist_ok=True)
@@ -31,8 +48,12 @@ class Settings:
         if os.path.exists(settings_file):
             with open(settings_file) as file:
                 settings = json.load(file)
-                self.db = settings['db']
-                self.library = settings['library']
+                self.db = settings.get('db', self.db)
+                self.library = settings.get('library', self.library)
+                self.optional_libraries = settings.get('optional_libraries', self.optional_libraries)
+                self.optional_dbs = settings.get('optional_dbs', self.optional_dbs)
+                self.anime = settings.get('anime', self.anime)
                 self.first = False
         else:
             self.first = True
+        self.save()

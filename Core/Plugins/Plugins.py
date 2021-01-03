@@ -6,29 +6,42 @@ from Core.Plugins.Base import Flags
 from typing import Union, List
 
 class Plugins:
+    ''' This class handles the plugins
+        A Plugin inside a the list or the dict is a dictionary with
+        keys 'name' and 'module'. module houses the plugin instance '''
     def __init__(self, settings):
+        # list is a list of all plugins
         self.list = []
-        self.dictionary = {}
+        # plugin_ dictionary is a dictionary with the keys
+        # 'library' and 'metadata' with a list of plugins each
+        self.plugin_dictionary = {}
         self.settings = settings
 
     def load(self):
-        self.dictionary, self.list = Loader().get('Plugins')
+        ''' Asks the Loader to check for plugins in the "Plugins" folder '''
+        self.plugin_dictionary, self.list = Loader().get('Plugins')
 
     def libraries(self)-> dict:
-        return self.dictionary['library']
+        '''Returns the library plugins'''
+        return self.plugin_dictionary['library']
 
     def dbs(self)-> dict:
-        return self.dictionary['db']
+        '''Returns the library plugins'''
+        return self.plugin_dictionary['metadata']
 
     def get_auth_types(self):
+        '''Returns a list of all the authentication types of the plugins'''
         auth_types = []
         for plugin in self.list:
             auth_types.append(plugin.authenticator.type)
 
     def get_authentication_needed(self)-> dict:
+        """ Checks if each selected library or database is not authenticated yet and returns a
+        dict with a list for each authentication type (OAuth, or username and password)"""
         OAuth = []
         UserPass = []
         for plugin in self.list:
+            # Select only selected plugins
             if plugin.name == self.settings.library or \
                 plugin.name == self.settings.db or \
                 plugin.name in self.settings.optional_libraries or \
@@ -49,12 +62,14 @@ class Plugins:
         return {'OAuth': OAuth, 'UserPass': UserPass}
 
     def get(self, name) -> Union[BaseLibrary, BaseMetadata]:
+        '''Returns the plugin instance based on name'''
         for plugin in self.list:
             if plugin.name == name:
                 return plugin
         raise ModuleNotFoundError
 
     def meta_flagged(self, flag: Flags.MetadataFlag)-> List[BaseMetadata]:
+        '''returns a list of plugins with specific metadata flags'''
         flagged = []
         for plugin in self.dbs():
             if flag in plugin.get("module").metadata_flags:

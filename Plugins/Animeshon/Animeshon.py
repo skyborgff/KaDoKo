@@ -34,7 +34,7 @@ class Animeshon(BaseMetadata):
                                                                   expire_after=60*60*24*7,
                                                                   allowable_methods=('GET', 'POST'),
                                                                   include_get_headers=True)
-        self.debug_start_time = 0
+        # self.requests_session = requests.Session()
         self.getratelimiter = RateLimiter(max_calls=30, period=30, callback=limited)
         self.queryratelimiter = RateLimiter(max_calls=10, period=30, callback=limited)
 
@@ -52,9 +52,11 @@ class Animeshon(BaseMetadata):
         with rate_limiter:
             result = self.requests_session.post(url, json={'query': query})
             # result = requests.post(url, json={'query': query})
-        if result.from_cache:
-            # deletes last call if it was cached. only real api calls need to be slowed down
-            rate_limiter.calls.pop()
+        try:
+            if result.from_cache:
+                # deletes last call if it was cached. only real api calls need to be slowed down
+                rate_limiter.calls.pop()
+        except: pass
         if result.ok:
             return json.loads(result.content), result
         else:
@@ -74,7 +76,6 @@ class Animeshon(BaseMetadata):
         for metaId in metaIDs.list:
             if metaId.PluginName in namespace_dict.keys():
                 print(f"Animeshon: Linking ids from: {metaId.PluginName} : {metaId.id}")
-                print(f"Elapsed: {time.time()- self.debug_start_time} s")
                 namespace = namespace_dict[metaId.PluginName]
                 externalID = metaId.id
                 query = queries.queryCrossReference.format(externalID=externalID, namespace=namespace)
@@ -94,33 +95,22 @@ class Animeshon(BaseMetadata):
                 metaIDs.list.append(meta_Metaid)
         return metaIDs
 
-    def LinkIds(self, database: Database):
-        """Grabs animes from the database and adds new
+    def LinkIds(self, database: Database, anime_hash: str):
+        """Grabs the anime from the database and adds new
         metadata ids from diferent providers"""
-        anime_hash = database.getByClass(AnimeStruct.Anime)
-        print(f"Animeshon: Linking {len(anime_hash)} ids")
-        self.debug_start_time = time.time()
-        for hash in anime_hash:
-            anime: AnimeStruct.Anime = AnimeStruct.Anime.from_db(hash, database)
-            MetaIds: AnimeStruct.MetaIDs = self.LinkId(anime.id)
-            MetaIds.to_db(database)
+        anime: AnimeStruct.Anime = AnimeStruct.Anime.from_db(anime_hash, database)
+        MetaIds: AnimeStruct.MetaIDs = self.LinkId(anime.id)
+        MetaIds.to_db(database)
 
-    def PopulateAnime(self, database: Database):
-        print("Animeshon: Populating Anime Database")
-        node_hash_list = []
-        for node_hash in database.graph.nodes:
-            node_hash_list.append(node_hash)
-        for node_hash in node_hash_list:
-            node = database.graph.nodes[node_hash]
-            if node["data_class"] == "Anime":
-                oldAnimeData = AnimeStruct.Anime.from_db(node_hash, database)
-                if oldAnimeData.id.getID("Animeshon"):
-                    AnimeshonID = oldAnimeData.id.getID("Animeshon")
-                    print(f"Animeshon: Obtaining Anime Metadata: {AnimeshonID}")
-                    query = queries.getAnime.format(AnimeshonID=AnimeshonID)
-                    queryReply, raw = self.query(query, 'get')
-                    anime_metadata = queryReply.get("data").get('getAnime')
-                    properAnime = AnimeshonFormatter.AnimeMetadata(anime_metadata, oldAnimeData)
-                    # remove edges to stop the anime from keeping some old info like type
-                    database.remove_successor_edges(oldAnimeData.hash)
-                    properAnime.to_db(database)
+    def PopulateAnime(self, database: Database, anime_hash: str):
+        oldAnimeData = AnimeStruct.Anime.from_db(anime_hash, database)
+        if oldAnimeData.id.getID("Animeshon"):
+            AnimeshonID = oldAnimeData.id.getID("Animeshon")
+            print(f"Animeshon: Obtaining Anime Metadata: {AnimeshonID}")
+            query = queries.getAnime.format(AnimeshonID=AnimeshonID)
+            queryReply, raw = self.query(query, 'get')
+            anime_metadata = queryReply.get("data").get('getAnime')
+            properAnime = AnimeshonFormatter.AnimeMetadata(anime_metadata, oldAnimeData)
+            # remove edges to stop the anime from keeping some old info like type
+            database.remove_successor_edges(oldAnimeData.hash)
+            properAnime.to_db(database)

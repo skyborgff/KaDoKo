@@ -38,12 +38,19 @@ class MAL(BaseLibrary, BaseMetadata):
         url_token = "https://myanimelist.net/v1/oauth2/token"
         self.authenticator = OAuth(self.name, client_id, url_auth, url_token)
         self.requests_session = CacheControl(requests.Session(), cache=FileCache('.Cache/MAL'), heuristic=MALHeuristic())
+        self.requests_session = requests.Session()
+        self.rate_limiter = RateLimiter(max_calls=1, period=2, callback=limited)
 
     # Currently MAL is not rate limiting, but if it starts, i'll leave this here.
-    @RateLimiter(max_calls=300, period=3, callback=limited)
     def load(self, url):
         header = {"Authorization": str(self.authenticator.token_type + " " + self.authenticator.token)}
-        result = self.requests_session.get(url, headers=header)
+        with self.rate_limiter:
+            result = self.requests_session.get(url, headers=header)
+        try:
+            if result.from_cache:
+                # deletes last call if it was cached. only real api calls need to be slowed down
+                self.rate_limiter.calls.pop()
+        except: pass
         if result.ok:
             return json.loads(result.content)
         else:
@@ -59,22 +66,15 @@ class MAL(BaseLibrary, BaseMetadata):
         AnimeList = MALFormatter.AnimeList(list)
         return AnimeList
 
-    def PopulateAnime(self, database: Database):
-        print("MAL: Populating Anime Database")
-        node_hash_list = []
-        for node_hash in database.graph.nodes:
-            node_hash_list.append(node_hash)
-        for node_hash in node_hash_list:
-            node = database.graph.nodes[node_hash]
-            if node["data_class"] == "Anime":
-                oldAnimeData = AnimeStruct.Anime.from_db(node_hash, database)
-                if oldAnimeData.id.getID("MAL"):
-                    malID = oldAnimeData.id.getID("MAL")
-                    print(f"MAL: Obtaining Anime Metadata: {malID}")
-                    url = URL_MAIN + URL_DETAILS.format(id=str(malID)) + ANIME_ALL_FIELDS
-                    anime_metadata = self.load(url)
-                    properAnime = MALFormatter.AnimeMetadata(anime_metadata, oldAnimeData)
-                    # remove edges to stop the anime from keeping some old info like type
-                    database.remove_successor_edges(oldAnimeData.hash)
-                    properAnime.to_db(database)
+    def PopulateAnime(self, database: Database, anime_hash: str):
+        oldAnimeData = AnimeStruct.Anime.from_db(anime_hash, database)
+        if oldAnimeData.id.getID("MAL"):
+            malID = oldAnimeData.id.getID("MAL")
+            print(f"MAL: Obtaining Anime Metadata: {malID}")
+            url = URL_MAIN + URL_DETAILS.format(id=str(malID)) + ANIME_ALL_FIELDS
+            anime_metadata = self.load(url)
+            properAnime = MALFormatter.AnimeMetadata(anime_metadata, oldAnimeData)
+            # remove edges to stop the anime from keeping some old info like type
+            database.remove_successor_edges(oldAnimeData.hash)
+            properAnime.to_db(database)
 

@@ -6,7 +6,7 @@ import os
 class Loader:
     def __init__(self):
         self.discovered_plugins = {'library': [],
-                                   'db': []}
+                                   'metadata': []}
         self.plugins = []
 
     def get(self, path: str):
@@ -27,7 +27,7 @@ class Loader:
                                                                'module': plugin_intance})
                     print(f'Loaded as library')
                 if issubclass(type(plugin_intance), BaseMetadata.BaseMetadata):
-                    self.discovered_plugins['db'].append({'name': name,
+                    self.discovered_plugins['metadata'].append({'name': name,
                                                                'module': plugin_intance})
                     print(f'Loaded as metadata')
 

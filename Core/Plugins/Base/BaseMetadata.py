@@ -11,5 +11,8 @@ class BaseMetadata(BasePlugin):
         self.type: PluginType = PluginType.Metadata
         self.metadata_flags: List[Flags.MetadataFlag] = []
 
-    def PopulateAnime(self, database: Database):
+    def PopulateAnime(self, database: Database, anime_hash: str):
         raise NotImplementedError
+
+    def LinkIds(self, database: Database, anime_hash: str):
+        pass

@@ -34,13 +34,17 @@ class Database:
             file.write(data)
         print(f"Wrote node-link JSON data to {path}")
 
-    def remove_successor_edges(self, node_hash):
+    def remove_successor_edges(self, node_hash, delete_empty: bool = True):
+        '''Removes all edges tied to a node.
+        If a node ends up not connected to any more edges, it is deleted.'''
         successors = self.graph.successors(node_hash)
         successors_list = []
         for successor in successors:
             successors_list.append(successor)
         for successor in successors_list:
             self.graph.remove_edge(node_hash, successor)
+            if len(list(self.graph.successors(successor))) == 0 and delete_empty:
+                self.graph.remove_node(successor)
 
     def getByClass(self, node_class):
         found = []
