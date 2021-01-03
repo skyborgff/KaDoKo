@@ -352,3 +352,4 @@ anidbtest.py
 /API/ANIDB/UDP_Auth.json
 /Settings/
 /.Cache/
+/Core/API/FlaskFiles/force/force.json
