@@ -68,7 +68,7 @@ class Tasker():
         real_reply = None
         for index in range(len(self._taskDict['replies'])):
             if self._taskDict['replies'][index]['code'] == code:
-                real_reply = self._taskDict['replies']['result']
+                real_reply = self._taskDict['replies'][index]['reply']
                 self._taskDict['replies'].pop(index)
                 continue
         return real_reply
