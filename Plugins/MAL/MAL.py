@@ -33,12 +33,13 @@ class MAL(BaseLibrary, BaseMetadata):
         super().__init__()
         self.name = "MAL"
         self.logo_url = 'https://upload.wikimedia.org/wikipedia/commons/7/7a/MyAnimeList_Logo.png'
+        self.website_url = 'https://myanimelist.net/'
         client_id = "add1ed488bd218c2e10146345377a0b8"
         url_auth = "https://myanimelist.net/v1/oauth2/authorize"
         url_token = "https://myanimelist.net/v1/oauth2/token"
         self.authenticator = OAuth(self.name, client_id, url_auth, url_token)
         self.requests_session = CacheControl(requests.Session(), cache=FileCache('.Cache/MAL'), heuristic=MALHeuristic())
-        self.requests_session = requests.Session()
+        # self.requests_session = requests.Session()
         self.rate_limiter = RateLimiter(max_calls=1, period=2, callback=limited)
 
     # Currently MAL is not rate limiting, but if it starts, i'll leave this here.
@@ -70,6 +71,7 @@ class MAL(BaseLibrary, BaseMetadata):
         oldAnimeData = AnimeStruct.Anime.from_db(anime_hash, database)
         if oldAnimeData.id.getID("MAL"):
             malID = oldAnimeData.id.getID("MAL")
+            malID = "31121"
             print(f"MAL: Obtaining Anime Metadata: {malID}")
             url = URL_MAIN + URL_DETAILS.format(id=str(malID)) + ANIME_ALL_FIELDS
             anime_metadata = self.load(url)

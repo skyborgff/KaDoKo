@@ -30,7 +30,6 @@ class OAuth(Authenticator):
             "code_challenge_method": 'plain',
             "state": "RequestID42",
         }
-        print(self.code_challenge)
         url = self.url_auth + "?" + urlencode(auth_params)
         return url
 

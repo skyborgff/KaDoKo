@@ -40,6 +40,11 @@ class FlaskAPI:
             info = self.tasker.addWaitReply('db_list', TaskImportance.UI, TaskType.SYNC)
             return jsonify(info)
 
+        @self.app.route('/plugin_info', methods=['GET'])
+        def plugin_info():
+            info = self.tasker.addWaitReply('plugin_info', TaskImportance.UI, TaskType.SYNC)
+            return jsonify(info)
+
         @self.app.route('/setup_settings', methods=['POST'])
         def setup_settings():
             response_object = {'status': 'success'}

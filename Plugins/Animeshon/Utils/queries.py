@@ -27,9 +27,9 @@ getAnime = '''
   getAnime(id: "{AnimeshonID}") 
   {{
   id
-	restrictions{{
+  restrictions{{
     selfLink
-		country{{alpha2}}
+    country{{alpha2}}
     type
     tag
   }}
@@ -48,7 +48,7 @@ getAnime = '''
   }}
   status
   relations{{
-		type
+    type
     object{{
       ...on Anime{{
         id
@@ -211,8 +211,8 @@ getAnime = '''
     website{{formattedAddress}}
   }}
   websites{{
-		host{{domain}}
-    formattedAddress
+   host{{domain}}
+   formattedAddress
   }}
   id
   selfLink

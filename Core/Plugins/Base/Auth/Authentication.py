@@ -6,7 +6,7 @@ import os
 
 
 class AuthType(Enum):
-    Null = 0
+    NoAuth = 0
     UserPass = 1
     OAuth = 2
 

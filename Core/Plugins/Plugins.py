@@ -11,7 +11,7 @@ class Plugins:
         keys 'name' and 'module'. module houses the plugin instance '''
     def __init__(self, settings):
         # list is a list of all plugins
-        self.list = []
+        self.list: List[Union[BaseMetadata, BaseLibrary]] = []
         # plugin_ dictionary is a dictionary with the keys
         # 'library' and 'metadata' with a list of plugins each
         self.plugin_dictionary = {}
@@ -53,13 +53,43 @@ class Plugins:
                     auth_type = plugin.authenticator.type
                     if auth_type == AuthType.OAuth:
                         url = plugin.authenticator.url()
+                        # create_url will be used to create a new account
                         OAuth.append({'name': name,
+                                      'website_url': '',
                                       'url': url,
                                       'logo_url': logo,
                                       'create_url': ''})
                     elif type == AuthType.UserPass:
                         raise NotImplementedError
         return {'OAuth': OAuth, 'UserPass': UserPass}
+
+    def plugin_info(self):
+        plugin_info_list = []
+        for plugin in self.list:
+            name = plugin.name
+            PluginType = [type.name for type in plugin.type]
+            AuthType = plugin.authenticator.type
+            AuthState = plugin.authenticator.state.name
+            if AuthType != AuthType.NoAuth:
+                url = plugin.authenticator.url()
+            else:
+                url = ''
+            AuthType = AuthType.name
+            logo = plugin.logo_url
+            website_url = plugin.website_url
+            create_url = plugin.create_url
+
+            plugin_info = {'name': name,
+                           'PluginType': PluginType,
+                           'AuthType': AuthType,
+                           'AuthState': AuthState,
+                           'logo': logo,
+                           'website_url': website_url,
+                           'url': url,
+                           'create_url': create_url}
+            plugin_info_list.append(plugin_info)
+        return plugin_info_list
+
 
     def get(self, name) -> Union[BaseLibrary, BaseMetadata]:
         '''Returns the plugin instance based on name'''

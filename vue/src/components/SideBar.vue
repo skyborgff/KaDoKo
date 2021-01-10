@@ -25,28 +25,13 @@
 
             <ul class="nav flex-column mb-2 ">
               <li class="nav-item">
-                <router-link class="nav-link" to="/Settings/Fix_Matching">
-                  Fix Matching
+                <router-link class="nav-link" to="/Settings/Providers">
+                  Providers
                 </router-link>
               </li>
               <li class="nav-item">
-                <router-link class="nav-link" to="/Settings/MAL/Watching">
-                  MAL
-                </router-link>
-              </li>
-              <li class="nav-item">
-                <router-link class="nav-link" to="/Settings/ANIDB">
-                  ANIDB
-                </router-link>
-              </li>
-              <li class="nav-item">
-                <router-link class="nav-link" to="/Settings/Torrent">
-                  Torrent
-                </router-link>
-              </li>
-              <li class="nav-item">
-                <router-link class="nav-link" to="/Settings/Plex">
-                  Plex
+                <router-link class="nav-link" to="/Settings/Anime">
+                  Anime
                 </router-link>
               </li>
             </ul>

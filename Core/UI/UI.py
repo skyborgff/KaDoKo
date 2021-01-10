@@ -23,6 +23,10 @@ class UI:
             dbs_names.append(db['name'])
         return dbs_names
 
+    def plugin_info(self):
+        plugin_info = self.kadoko.plugins.plugin_info()
+        return plugin_info
+
     def setup_settings(self, settings: dict):
         self.kadoko.settings.library = settings.get('selected_library')
         self.kadoko.settings.db = settings.get('selected_db')
@@ -45,6 +49,7 @@ class UI:
     def populate_tasks(self):
         self.kadoko.tasker.addCallback('library_list', self.library_list)
         self.kadoko.tasker.addCallback('db_list', self.db_list)
+        self.kadoko.tasker.addCallback('plugin_info', self.plugin_info)
         self.kadoko.tasker.addCallback('setup_settings', self.setup_settings)
         self.kadoko.tasker.addCallback('get_authentication_needed', self.get_authentication_needed)
         self.kadoko.tasker.addCallback('set_authentication', self.set_authentication)

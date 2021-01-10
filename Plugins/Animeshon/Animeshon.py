@@ -24,6 +24,7 @@ class Animeshon(BaseMetadata):
         super().__init__()
         self.name = "Animeshon"
         self.logo_url = 'https://animeshon.com/e/_next/static/media/animeshon-brand.5de13d23bcab08ceaeaec5186335d368.svg'
+        self.website_url = 'https://animeshon.com/e/'
         self.metadata_flags = [Flags.MetadataFlag.MetadataLinker]
         self.requests_session = CacheControl(requests.Session(),
                                              cacheable_methods=("POST", "GET"),
@@ -51,7 +52,6 @@ class Animeshon(BaseMetadata):
             rate_limiter = self.getratelimiter
         with rate_limiter:
             result = self.requests_session.post(url, json={'query': query})
-            # result = requests.post(url, json={'query': query})
         try:
             if result.from_cache:
                 # deletes last call if it was cached. only real api calls need to be slowed down
