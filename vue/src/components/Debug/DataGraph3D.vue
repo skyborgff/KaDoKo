@@ -18,25 +18,13 @@
 </template>
 
 <script>
-  /* eslint-disable */
-  // https://github.com/vasturiano/3d-force-graph
-  // https://github.com/vasturiano/force-graph
-  // https://github.com/vasturiano/d3-force-registry
-
-  // https://github.com/vasturiano/3d-force-graph/issues/408
-
   import axios from 'axios';
   import ForceGraph3D from '3d-force-graph';
-  import ForceGraph from 'force-graph';
-  import * as d3 from 'd3-force-3d';  // eslint-disable-line no-unused-vars
-  import * as d3Sampled from 'd3-force-sampled';  // eslint-disable-line no-unused-vars
-  import * as THREE from 'three';  // eslint-disable-line no-unused-vars
-  import * as dat from 'dat.gui';
-  import Anime from "../Settings/Anime";
+  import * as d3 from 'd3-force-3d';
   import SpriteText from "three-spritetext"
 
   export default {
-    name: "DataGraph",
+    name: "DataGraph3D",
     data: function () {
       return {
         nodes: [],

@@ -29,6 +29,7 @@ MAX_ASYNC_TASKS = 10
 
 
 class Tasker():
+    # Todo: Clenup
     def __init__(self, taskDict: dict):
         self._taskDict = taskDict
         self._tasksCallback: dict = {}
@@ -44,7 +45,7 @@ class Tasker():
         if args is None:
             args = []
         task, code = self._createTask(task_name, importance, task_type, args)
-        self._taskDict['tasks'] += [task]
+        self._taskDict['tasks'].append(task)
         return code
 
     def getReply(self, code) -> str:
@@ -66,10 +67,12 @@ class Tasker():
     def _checkReply(self, code):
         '''Delete the reply if it exists, and returns it'''
         real_reply = None
-        for index in range(len(self._taskDict['replies'])):
-            if self._taskDict['replies'][index]['code'] == code:
-                real_reply = self._taskDict['replies'][index]['reply']
-                self._taskDict['replies'].pop(index)
+        for index, item in enumerate(self._taskDict['replies']):
+            if item['code'] == code:
+                real_reply = item['reply']
+                if real_reply == None:
+                    real_reply = ''
+                self._taskDict['replies'].remove(item)
                 continue
         return real_reply
 
@@ -92,12 +95,15 @@ class Tasker():
                      'task_type': task_type.name}
         return task_dict, task_code
 
-    def _getTasks(self, filter=None) -> (list, dict):
-        if filter:
-            current_tasks = [task for task in self._taskDict.get('tasks')
+    def _getTasks(self, filter=None, matchFilter = True) -> (list, dict):
+        if filter and matchFilter:
+            current_tasks = [task for task in list(self._taskDict.get('tasks'))
                              if TaskImportance[task.get('task_importance')] == filter]
+        elif filter and not matchFilter:
+            current_tasks = [task for task in list(self._taskDict.get('tasks'))
+                             if TaskImportance[task.get('task_importance')] != filter]
         else:
-            current_tasks = [task for task in self._taskDict.get('tasks')]
+            current_tasks = [task for task in list(self._taskDict.get('tasks'))]
         current_tasks.sort(key=lambda t: TaskImportance[t.get('task_importance')].value)
 
         current_tasks_dict = {TaskImportance[importance]:
@@ -116,13 +122,13 @@ class Tasker():
         return current_tasks, current_tasks_dict
 
     def _completeTask(self, code, reply):
-        current_tasks, current_tasks_dict = self._getTasks()
-        for index, item in enumerate(current_tasks):
+        for index, item in enumerate(self._taskDict['tasks']):
             if item['code'] == code:
-                current_tasks.pop(index)
+                self._taskDict['tasks'].remove(item)
                 continue
-        self._taskDict['tasks'] = current_tasks
-        self._taskDict['replies'] += [{'code': code, 'reply': reply}]
+        self._taskDict['replies'].append({'code': code, 'reply': reply})
+
+
 
     def __run(self, task):
         task_name = task.get('name')
@@ -194,15 +200,15 @@ class Tasker():
 
     def UIloop(self):
         while True:
-                current_tasks, current_tasks_dict = self._getTasks(filter=TaskImportance.UI)
-                self._runTasks(current_tasks, current_tasks_dict)
-                time.sleep(self.sleep_calculator(self._getTasks(filter=TaskImportance.UI)[0]))
+            current_tasks, current_tasks_dict = self._getTasks(filter=TaskImportance.UI)
+            self._runTasks(current_tasks, current_tasks_dict)
+            time.sleep(self.sleep_calculator(self._getTasks(filter=TaskImportance.UI)[0]))
 
     def normalloop(self):
         while True:
-                current_tasks, current_tasks_dict = self._getTasks(filter=None)
+                current_tasks, current_tasks_dict = self._getTasks(filter=TaskImportance.UI, matchFilter=False)
                 self._runTasks(current_tasks, current_tasks_dict)
-                time.sleep(self.sleep_calculator(self._getTasks(filter=None)[0]))
+                time.sleep(self.sleep_calculator(self._getTasks(filter=TaskImportance.UI, matchFilter=False)[0]))
 
     def loop(self):
         '''Starts the UI task thread and the regular task thread.'''

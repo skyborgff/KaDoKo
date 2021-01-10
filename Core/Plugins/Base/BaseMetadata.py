@@ -8,7 +8,10 @@ from Core.Database.Database import Database
 class BaseMetadata(BasePlugin):
     def __init__(self):
         super().__init__()
-        self.type: PluginType = PluginType.Metadata
+        try:
+            self.type.append(PluginType.Metadata)
+        except AttributeError:
+            self.type: List[PluginType] = []
         self.metadata_flags: List[Flags.MetadataFlag] = []
 
     def PopulateAnime(self, database: Database, anime_hash: str):

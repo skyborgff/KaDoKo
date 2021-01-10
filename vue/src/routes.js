@@ -2,20 +2,18 @@ import Main from "./components/Main";
 import Options from "./components/Setup/Options";
 import Setup from "./components/Setup/Setup";
 import Authenticate from "./components/Setup/Authenticate";
-import DataGraph from "./components/Debug/DataGraph3d2";
-// import Dashboard from "./components/Dashboard";
-import Calendar from "./components/Calendar";
-// import MAL from "./components/Settings/MAL";
-// import ANIDB from "./components/Settings/ANIDB";
-// import Fix_Matching from "./components/Settings/Fix_Matching";
-// import Anime from "./components/Settings/Anime";
+import DataGraph3D from "./components/Debug/DataGraph3D";
+import Settings from "./components/Settings/Settings"
+import Providers from "./components/Settings/Providers/Providers"
+import AnimeSettings from "./components/Settings/Anime/AnimeSettings"
 
 
 export default [
   { path: '/main', component: Main,
     children: [
-      {path: '/Settings', component: Calendar},
-      {path: '/Debug/Graph', component: DataGraph, children: [{path: ':graph_type', component: DataGraph}]}
+      { path: '/Settings', component: Settings, children:
+          [{ path: 'providers', component: Providers}, { path: 'anime', component: AnimeSettings}]},
+      { path: '/Debug/Graph', component: DataGraph3D, children: [{path: ':graph_type', component: DataGraph3D}]}
     ]},
   { path: '/Setup', component: Setup,
     children: [
