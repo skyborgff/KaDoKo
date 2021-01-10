@@ -146,10 +146,12 @@ class Tasker():
         if task_type == TaskType.SYNC:
             reply = callback(*task_args)
         elif task_type == TaskType.ASYNC:
-            thread = threading.Thread(target=callback, args=task_args)
-            thread.start()
-            reply = thread.join()
-            # raise NotImplementedError
+            reply = callback(*task_args)
+        # elif task_type == TaskType.ASYNC:
+        #     thread = threading.Thread(target=callback, args=task_args)
+        #     thread.start()
+        #     reply = thread.join()
+        #     # raise NotImplementedError
         elif task_type == TaskType.THREAD:
             raise NotImplementedError
         else:
@@ -181,8 +183,11 @@ class Tasker():
                             called += 1
                             async_tasks.append(task)
                     with concurrent.futures.ThreadPoolExecutor() as executor:
-                        executor.map(self.__run, async_tasks)
-                        return
+                        thread_results = executor.map(self.__run, async_tasks)
+                        for result in thread_results:
+                            # force them to run
+                            a = result
+                    return
             elif importance_tasks.get(TaskType.SYNC):
                 tasks = importance_tasks.get(TaskType.SYNC)
                 for task_name in tasks:
@@ -213,7 +218,7 @@ class Tasker():
     def loop(self):
         '''Starts the UI task thread and the regular task thread.'''
         # Starting separate threads ensures the UI thread never waits for the normal thread
-        #   for example, it it gets rate limited
+        #   for example, if it gets rate limited
         UIThread = threading.Thread(target=self.UIloop)
         normalhread = threading.Thread(target=self.normalloop)
         UIThread.start()

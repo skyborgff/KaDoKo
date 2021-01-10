@@ -48,4 +48,4 @@ class MetadataManager:
         self.kadoko.tasker.addCallback('linkIds', self.linkIds)
         self.kadoko.tasker.addCallback('linkId', self.linkId, max_async_calls=10)
         self.kadoko.tasker.addCallback('populateAllMetadata', self.populateAllMetadata)
-        self.kadoko.tasker.addCallback('populateMetadata', self.populateMetadata, max_async_calls=1)
+        self.kadoko.tasker.addCallback('populateMetadata', self.populateMetadata, max_async_calls=30)
