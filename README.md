@@ -15,10 +15,10 @@ Ex: Description comes from MAL, episode names from AniDB, episode descriptions f
 | Mal                | Implemented |
 | Animeshon          | Planned     |
 | AniDB              | Planned     |
-| AniList            | Planned     |
-| Anime-planet       | Planned     |
-| Anime News Network | Planned     |
-| Kitsu              | Planned     |
+| AniList            | Analyzing   |
+| Anime-planet       | Analyzing   |
+| Anime News Network | Analyzing   |
+| Kitsu              | Analyzing   |
 
 ## Metadata Providers supported:
 | Metadata provider  | Status      | 
@@ -26,10 +26,10 @@ Ex: Description comes from MAL, episode names from AniDB, episode descriptions f
 | Mal                | Implemented |
 | Animeshon          | Implemented |
 | AniDB              | Planned     |
-| AniList            | Planned     |
-| Anime-planet       | Planned     |
-| Anime News Network | Planned     |
-| Kitsu              | Planned     |
+| AniList            | Analyzing   |
+| Anime-planet       | Analyzing   |
+| Anime News Network | Analyzing   |
+| Kitsu              | Analyzing   |
 
 ## Media server metadata support:
 | Media Server | Status  | 
@@ -45,6 +45,7 @@ Ex: Description comes from MAL, episode names from AniDB, episode descriptions f
 | ListSynchronizer | Planned | Synchronizes your lists |
 | PTWReleaseMover  | Planned | Moves animes from PTW to the Watching lists when they release |
 | Renamer          | Planned | Renames files to fit a naming scheme |
+| WebHook          | Planned | Uses webhooks to send discord notificatins |
 
 
 ## Developing
