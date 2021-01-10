@@ -26,7 +26,7 @@ class Kadoko:
         self.libraryManager = LibraryManager(self)
         self.ui = UI(self)
         populate_tasks(self)
-        asyncio.run(self.tasker.loop())
+        self.tasker.loop()
 
     def SettedUp(self):
         pass

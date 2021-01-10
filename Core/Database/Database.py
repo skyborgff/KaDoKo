@@ -15,7 +15,6 @@ class Database:
         self.graph: nx.classes.DiGraph = None
         self.load_graph()
 
-
     def load_graph(self):
         '''Load the database from disk'''
         os.makedirs(database_folder, exist_ok=True)

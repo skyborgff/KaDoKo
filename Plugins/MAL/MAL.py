@@ -4,6 +4,7 @@ from Core.Plugins.Base.Auth.OAuth import OAuth
 import requests
 import json
 from ratelimiter import RateLimiter
+from Core.Utils.AsyncRateLimiter import AsyncRateLimiter
 import time
 import Plugins.MAL.Utils.MALFormatter as MALFormatter
 from Plugins.MAL.Utils.CachingHeuristic import MALHeuristic
@@ -25,7 +26,7 @@ ANIME_ALL_FIELDS = '?fields=id,title,main_picture,alternative_titles,start_date,
 
 def limited(until):
     duration = int(round(until - time.time()))
-    print(f'MAL is being rate limited, sleeping for {duration} seconds')
+    print(f'MAL: Rate limiting, sleeping for {duration} seconds')
 
 
 class MAL(BaseLibrary, BaseMetadata):
@@ -40,7 +41,7 @@ class MAL(BaseLibrary, BaseMetadata):
         self.authenticator = OAuth(self.name, client_id, url_auth, url_token)
         self.requests_session = CacheControl(requests.Session(), cache=FileCache('.Cache/MAL'), heuristic=MALHeuristic())
         # self.requests_session = requests.Session()
-        self.rate_limiter = RateLimiter(max_calls=1, period=2, callback=limited)
+        self.rate_limiter = AsyncRateLimiter(max_calls=100, period=1, callback=limited)
 
     # Currently MAL is not rate limiting, but if it starts, i'll leave this here.
     def load(self, url):
@@ -71,7 +72,6 @@ class MAL(BaseLibrary, BaseMetadata):
         oldAnimeData = AnimeStruct.Anime.from_db(anime_hash, database)
         if oldAnimeData.id.getID("MAL"):
             malID = oldAnimeData.id.getID("MAL")
-            malID = "31121"
             print(f"MAL: Obtaining Anime Metadata: {malID}")
             url = URL_MAIN + URL_DETAILS.format(id=str(malID)) + ANIME_ALL_FIELDS
             anime_metadata = self.load(url)
