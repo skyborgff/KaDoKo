@@ -14,8 +14,8 @@ if __name__ == '__main__':
     manager = Manager()
     d = manager.dict()
 
-    d['tasks'] = []
-    d['replies'] = []
+    d['tasks'] = manager.list()
+    d['replies'] = manager.list()
 
     def run_flask(d):
         Flask = FlaskAPI(d)
