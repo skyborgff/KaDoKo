@@ -45,7 +45,7 @@ class FlaskAPI:
             response_object = {'status': 'success'}
             post_data = request.get_json()
             # self.kadoko.ui.setup_settings(post_data)
-            self.tasker.addTask('setup_settings', TaskImportance.UI, TaskType.SYNC, [post_data])
+            self.tasker.addWaitReply('setup_settings', TaskImportance.UI, TaskType.SYNC, [post_data])
             response_object['message'] = 'Settings Received'
             return jsonify(response_object)
 
