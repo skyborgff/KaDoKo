@@ -3,13 +3,13 @@
 
 Your anime list synchronizer, metadata organizer and media server metadata provider.
 
-##Overview:
+## Overview:
 - Select what lists are synchonizing.
 - Choose what metadata provider populates what info.   
 Ex: Description comes from MAL, episode names from AniDB, episode descriptions from Animeshon, etc
 - Provide metadata to a media server.
 
-##Lists supported:
+## Lists supported:
 | List               | Status      | 
 | ------------------ |:-----------:|
 | Mal                | Implemented |
@@ -20,7 +20,7 @@ Ex: Description comes from MAL, episode names from AniDB, episode descriptions f
 | Anime News Network | Planned     |
 | Kitsu              | Planned     |
 
-##Metadata Providers supported:
+## Metadata Providers supported:
 | Metadata provider  | Status      | 
 | ------------------ |:-----------:|
 | Mal                | Implemented |
@@ -31,13 +31,13 @@ Ex: Description comes from MAL, episode names from AniDB, episode descriptions f
 | Anime News Network | Planned     |
 | Kitsu              | Planned     |
 
-##Media server metadata support:
+## Media server metadata support:
 | Media Server | Status  | 
 | ------------ |:-------:|
 | Plex         | Planned |
 | Jellyfin     | Planned |
 
-##Other planned Plugins:
+## Other planned Plugins:
 | Plugin           | Status  |Description |
 | ---------------- |:-------:|------------ |
 | qBittorrent      | Planned | Downloads new episodes from your watching and custom list |
@@ -56,7 +56,7 @@ Run UI webserver
 Run main program  
 \>```python run app.py```
 
-#Useful links:
+# Useful links:
 
 Bootstrap components:  
 https://bootstrap-vue.org/docs/components
