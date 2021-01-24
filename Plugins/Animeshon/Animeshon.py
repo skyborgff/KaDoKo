@@ -16,6 +16,13 @@ import requests_cache
 from ratelimiter import RateLimiter
 from Core.Utils.AsyncRateLimiter import AsyncRateLimiter
 
+LOGO_LIST = ["https://cdn-us.animeshon.com/brand/logo-centered-small-1080.png",
+             "https://cdn-us.animeshon.com/brand/logo-no-text-2200.png",
+             "https://cdn-us.animeshon.com/brand/logo-no-text-background-white-2600.png",
+             "https://cdn-us.animeshon.com/brand/logo-text-400.png",
+             "https://cdn-us.animeshon.com/brand/logo-text-background-white-400.jpg",
+             "https://cdn-us.animeshon.com/brand/logo-text-large-3200.png"]
+
 def limited(until):
     duration = round(until - time.time(), 5)
     print(f'Animeshon: Rate limiting, sleeping for {duration} seconds', flush=True)
@@ -24,7 +31,7 @@ class Animeshon(BaseMetadata):
     def __init__(self):
         super().__init__()
         self.name = "Animeshon"
-        self.logo_url = 'https://animeshon.com/e/_next/static/media/animeshon-brand.5de13d23bcab08ceaeaec5186335d368.svg'
+        self.logo_url = LOGO_LIST[5]
         self.website_url = 'https://animeshon.com/e/'
         self.metadata_flags = [Flags.MetadataFlag.MetadataLinker]
         self.requests_session = CacheControl(requests.Session(),
