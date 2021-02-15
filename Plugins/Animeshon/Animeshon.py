@@ -38,18 +38,20 @@ class Animeshon(BaseMetadata):
                                              cacheable_methods=("POST", "GET"),
                                              cache=FileCache('.Cache/Animeshon'),
                                              heuristic=MALHeuristic())
+        # Note To Self: CacheControl uses the url as a key.
+        #  Post requests use the same url. research alternatives like requests-cache
+        #  https://github.com/ionrock/cachecontrol/issues/216
+
         self.requests_session = requests_cache.core.CachedSession(cache_name='.Cache/Animeshon/cache',
                                                                   backend='sqlite',
-                                                                  expire_after=60*60*24*7,
+                                                                  expire_after=60*60*24*365,  # 1 Year Cache
                                                                   allowable_methods=('GET', 'POST'),
                                                                   include_get_headers=True)
         self.uncached_requests_session = requests.Session()
         self.getratelimiter = AsyncRateLimiter(max_calls=30, period=30, callback=limited)
         self.queryratelimiter = AsyncRateLimiter(max_calls=10, period=30, callback=limited)
 
-    # Note To Self: CacheControl uses the url as a key.
-    #  Post requests use the same url. research alternatives like requests-cache
-    #  https://github.com/ionrock/cachecontrol/issues/216
+
 
 
     def query(self, query: str, query_type:str = 'query'):
@@ -96,7 +98,14 @@ class Animeshon(BaseMetadata):
                 print(f"Animeshon: Linking ids from: {metaId.PluginName} : {metaId.id}")
                 result = queryReply.get("data")
                 if not result.get("queryCrossReference"):
-                    print('Not Found')
+                    # Todo: This may also be true if we are being rate limited!
+                    if result.get('errors'):
+                        raise RuntimeError(result.get('errors')[0].get('message'))
+                    else:
+                        print('Not Found')
+                    # Delete from cache so next time it may have been added
+                    key = self.requests_session.cache.create_key(raw.request)
+                    self.requests_session.cache.delete(key)
                     return metaIDs
         anime_data = result.get("queryCrossReference")[0].get("content")
         Animeshon_Metaid = AnimeStruct.MetaID(self.name, anime_data.get("id"))
