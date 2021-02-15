@@ -78,6 +78,8 @@ class OAuth(Authenticator):
                 return True
             else:
                 self.state = AuthState.Expired
+                self.refresh_token()
+                self.state = AuthState.Logged
                 return False
         else:
             self.state = AuthState.NotLogged
@@ -99,9 +101,7 @@ class OAuth(Authenticator):
         else:
             return AuthCode.BadUnknown
 
-        self.client_id = token_json['client_id']
         self.token_type = token_json['token_type']
-        self.token_expire_time = token_json['expire_time']
         self.token = token_json['access_token']
         self.token_refresh = token_json['refresh_token']
 
