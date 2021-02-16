@@ -6,6 +6,7 @@ import DataGraph3D from "./components/Debug/DataGraph3D";
 import Settings from "./components/Settings/Settings"
 import Providers from "./components/Settings/Providers/Providers"
 import AnimeSettings from "./components/Settings/Anime/AnimeSettings"
+import AnimeListing from "./components/Anime/AnimeListing"
 
 
 export default [
@@ -13,7 +14,8 @@ export default [
     children: [
       { path: '/Settings', component: Settings, children:
           [{ path: 'providers', component: Providers}, { path: 'anime', component: AnimeSettings}]},
-      { path: '/Debug/Graph', component: DataGraph3D, children: [{path: ':graph_type', component: DataGraph3D}]}
+      { path: '/Debug/Graph', component: DataGraph3D, children: [{path: ':graph_type', component: DataGraph3D}]},
+      { path: '/Anime', component: AnimeListing}
     ]},
   { path: '/Setup', component: Setup,
     children: [
