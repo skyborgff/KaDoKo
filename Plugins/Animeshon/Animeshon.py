@@ -48,8 +48,8 @@ class Animeshon(BaseMetadata):
                                                                   allowable_methods=('GET', 'POST'),
                                                                   include_get_headers=True)
         self.uncached_requests_session = requests.Session()
-        self.getratelimiter = AsyncRateLimiter(max_calls=30, period=30, callback=limited)
-        self.queryratelimiter = AsyncRateLimiter(max_calls=10, period=30, callback=limited)
+        self.getratelimiter = AsyncRateLimiter(max_calls=20, period=1, callback=limited)
+        self.queryratelimiter = AsyncRateLimiter(max_calls=10, period=1, callback=limited)
 
 
 
@@ -107,7 +107,7 @@ class Animeshon(BaseMetadata):
                     key = self.requests_session.cache.create_key(raw.request)
                     self.requests_session.cache.delete(key)
                     return metaIDs
-        anime_data = result.get("queryCrossReference")[0].get("content")
+        anime_data = result.get("queryCrossReference")[0].get("resource")
         Animeshon_Metaid = AnimeStruct.MetaID(self.name, anime_data.get("id"))
         metaIDs.list.append(Animeshon_Metaid)
         for meta in anime_data.get("crossrefs"):

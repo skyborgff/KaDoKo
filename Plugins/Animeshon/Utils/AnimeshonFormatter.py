@@ -42,8 +42,10 @@ def AnimeMetadata(metadata, oldAnime: AnimeStruct.Anime) -> AnimeStruct.Anime:
     runningsList: List[dict] = metadata.get("runnings")
 
     def localizationMetadata(localization: dict):
-        language = localization.get('language').get('alpha2')
+        language = None
         script = None
+        if localization.get('language'):
+            language = localization.get('language').get('alpha2')
         if localization.get('script'):
             script = localization.get('script').get('code')
             script = pycountry.scripts.get(alpha_4=script).name
@@ -87,7 +89,7 @@ def AnimeMetadata(metadata, oldAnime: AnimeStruct.Anime) -> AnimeStruct.Anime:
                 age = Voiced.get('age')
                 name = None
                 for tryname in Voiced.get('names'):
-                    if tryname.get('localization').get('script').get('code') == 'Latn':
+                    if tryname.get('localization').get('script') and tryname.get('localization').get('script').get('code') == 'Latn':
                         name = tryname.get('text')
                 if name is None:
                     name = Voiced.get('names')[0].get('text')
@@ -184,7 +186,7 @@ def AnimeMetadata(metadata, oldAnime: AnimeStruct.Anime) -> AnimeStruct.Anime:
         episodes = AnimeStruct.Episodes()
         for episode in episodesList:
             type = AnimeStruct.EpisodeType[episode.get('type')]
-            index = episode.get('index')
+            index = episode.get('identifier')
             releasedate = None
             if episode.get('releaseDate'):
                 # '2020-12-04T00:00:00Z'
@@ -199,10 +201,11 @@ def AnimeMetadata(metadata, oldAnime: AnimeStruct.Anime) -> AnimeStruct.Anime:
     if runningsList:
         runnings = AnimeStruct.Runnings()
         for running in runningsList:
-            since = datetime.datetime.strptime(runningsList[0].get('from')[:-2],
-                                                         "%Y-%m-%dT%H:%M:%S")
-            to = datetime.datetime.strptime(runningsList[0].get('to')[:-2],
-                                                         "%Y-%m-%dT%H:%M:%S")
+            since = datetime.datetime.strptime(runningsList[0].get('from')[:-2], "%Y-%m-%dT%H:%M:%S")
+            if runningsList[0].get('to'):
+                to = datetime.datetime.strptime(runningsList[0].get('to')[:-2], "%Y-%m-%dT%H:%M:%S")
+            else:
+                to = datetime.datetime.utcfromtimestamp(0)
             Running = AnimeStruct.Running(since=since, to=to)
             runnings.list.append(Running)
         Anime.runnings = runnings

@@ -7,12 +7,13 @@ queryCrossReference = '''
     first: 1
   )
   {{
-    content{{
+    resource{{
       ...on Anime{{
         id
         crossrefs{{
           namespace
           externalID
+          partial
         }}
       }}
     }}
@@ -36,7 +37,7 @@ getAnime = '''
   releases{{
     languages{{alpha2}}
     releaseDate
-    medium{{
+    media{{
       type
       quantity
     }}
@@ -68,10 +69,7 @@ getAnime = '''
     names{{
       text
     }}
-    aliases{{
-      text
-    }}
-    description{{
+    descriptions{{
       text
     }}
   }}
@@ -228,7 +226,7 @@ getAnime = '''
   }}
   episodes{{
     type
-    index
+    identifier
     releaseDate
     names{{
       text
