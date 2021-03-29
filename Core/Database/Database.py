@@ -39,19 +39,16 @@ class Database:
     def remove_successor_edges(self, node_hash, delete_empty: bool = True):
         '''Removes all edges tied to a node.
         If a node ends up not connected to any more edges, it is deleted.'''
-        successors = self.graph.successors(node_hash)
-        successors_list = []
+        successors = list(self.graph.successors(node_hash))
         for successor in successors:
-            successors_list.append(successor)
-        for successor in successors_list:
             self.graph.remove_edge(node_hash, successor)
-            if len(list(self.graph.successors(successor))) == 0 and delete_empty:
+            if len(list(self.graph.predecessors(successor))) == 0 and delete_empty:
                 self.graph.remove_node(successor)
 
     def getByClass(self, node_class):
         '''Return a list of all node hashes with the specified class'''
         found = []
-        for node_hash in self.graph.nodes:
+        for node_hash in list(self.graph.nodes):
             node = self.graph.nodes[node_hash]
             node_raw = node.get('raw')
             if node_raw:

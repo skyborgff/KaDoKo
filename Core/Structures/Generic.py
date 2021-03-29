@@ -94,6 +94,10 @@ class Text(Hashed):
     def to_db(self, database: Database):
         return database.add_node(self, label=f"{self.Localization.Language}: {self.Text}", raw=True)
 
+    @staticmethod
+    def from_db(hash, database: Database):
+        PureText: Text = database.graph.nodes.get(hash).get('raw')
+        return PureText
 
 @dataclass
 class Names(Hashed):
@@ -105,6 +109,13 @@ class Names(Hashed):
             item_hash = item.to_db(database)
             database.add_edge(self.hash, item_hash)
         return self.hash
+
+    @staticmethod
+    def from_db(hash_list: list, database: Database):
+        PureNames = Names()
+        for hash in hash_list:
+            PureNames.list.append(Text.from_db(hash, database))
+        return PureNames
 
 @dataclass
 class Image(Hashed):
@@ -131,9 +142,15 @@ class Image(Hashed):
     def hashSeed(self):
         return f"{self.url}"
 
+    @staticmethod
+    def from_db(hash, database: Database):
+        PureImage: Image = database.graph.nodes.get(hash).get('raw')
+        return PureImage
+
 
 @dataclass
 class Images(Hashed):
+    # Todo: add method to request certain type of images
     list: List[Image] = field(default_factory=list)
 
     def to_db(self, database: Database):
@@ -142,6 +159,13 @@ class Images(Hashed):
             item_hash = item.to_db(database)
             database.add_edge(self.hash, item_hash)
         return self.hash
+
+    @staticmethod
+    def from_db(hash_list: list, database: Database):
+        PureImages = Images()
+        for hash in hash_list:
+            PureImages.list.append(Image.from_db(hash, database))
+        return PureImages
 
 
 

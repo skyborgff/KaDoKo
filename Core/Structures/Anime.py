@@ -118,6 +118,10 @@ class Tag(Hashed):
     def hashSeed(self):
         return f"{self.name}"
 
+    @staticmethod
+    def from_db(hash, database: Database):
+        PureTag: Tag = database.graph.nodes.get(hash).get('raw')
+        return PureTag
 
 @dataclass
 class Tags(Hashed):
@@ -129,6 +133,13 @@ class Tags(Hashed):
             item_hash = item.to_db(database)
             database.add_edge(self.hash, item_hash)
         return self.hash
+
+    @staticmethod
+    def from_db(hash_list: list, database: Database):
+        PureTags = Tags()
+        for hash in hash_list:
+            PureTags.list.append(Tag.from_db(hash, database))
+        return PureTags
 
 
 @dataclass
@@ -716,20 +727,25 @@ class Anime(Hashed):
             if episodes[0].list:
                 PureAnime.episodes = Episodes.from_db(node_hash[0], database)
 
+        names, node_hash = getClass(nodes_info, Text)
+        if names:
+            PureAnime.names = Names.from_db(node_hash, database)
+
+        images, node_hash = getClass(nodes_info, Image)
+        if images:
+            PureAnime.images = Images.from_db(node_hash, database)
+
+        tags, node_hash = getClass(nodes_info, Tag)
+        if tags:
+            PureAnime.tags = Tags.from_db(node_hash, database)
+
 
         # Todo: Text is not OK!
-        # name = getClass(info_dump, MetaID)
-        # if name:
-        #     PureAnime.names.list = name
-        # image = getClass(info_dump, MetaID)
-        # if image:
-        #     PureAnime.images.list = image
-        # tag = getClass(info_dump, MetaID)
-        # if tag:
-        #     PureAnime.tags.list = tag
+
         # audio = getClass(info_dump, MetaID)
         # if audio:
         #     PureAnime.soundtracks.list = audio
+
         # voiceactor = getClass(info_dump, MetaID)
         # if voiceactor:
         #     PureAnime.voiceActors.list = voiceactor

@@ -79,4 +79,8 @@ class FlaskAPI:
             self.tasker.addWaitReply('generate_graph', TaskImportance.UI, TaskType.SYNC, ["Core/API/FlaskFiles/force/force.json"])
             return send_from_directory('FlaskFiles/force', path)
 
+        @self.app.route('/get_anime_listing')
+        def get_anime_listing():
+            info = self.tasker.addWaitReply('get_anime_listing', TaskImportance.UI, TaskType.SYNC)
+            return jsonify(info)
         self.app.run('localhost', 8283, False)

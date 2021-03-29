@@ -1,4 +1,5 @@
 import webbrowser
+from Core.Structures.Anime import Anime
 
 class UI:
     def __init__(self, kadoko):
@@ -46,6 +47,32 @@ class UI:
     def generate_debug_graph(self, path):
         self.kadoko.database.generate_graph(path)
 
+    def get_anime_listing(self):
+        anime_hashes = self.kadoko.database.getByClass(Anime)
+        listing = []
+        for anime_hash in anime_hashes:
+            anime = Anime.from_db(anime_hash, self.kadoko.database)
+            # Todo: use the settings to request the correct localizations
+            logo_url = ''
+            if anime.images.list:
+                logo_url = anime.images.list[0].url
+            title = ''
+            subtitle = ''
+            if anime.names.list:
+                title = anime.names.list[0].Text
+                if len(anime.names.list)>1:
+                    subtitle = anime.names.list[1].Text
+            listing_anime = {'logo_url': logo_url,
+                             'title': title,
+                             'subtitle': subtitle,
+                             'rating': anime.publicRating.rated,
+                             'description': anime.description.Text,
+                             'categories': [tag.name for tag in anime.tags.list]}
+            listing.append(listing_anime)
+        # Todo: add some sorting
+        return listing
+
+
     def populate_tasks(self):
         self.kadoko.tasker.addCallback('library_list', self.library_list)
         self.kadoko.tasker.addCallback('db_list', self.db_list)
@@ -54,3 +81,4 @@ class UI:
         self.kadoko.tasker.addCallback('get_authentication_needed', self.get_authentication_needed)
         self.kadoko.tasker.addCallback('set_authentication', self.set_authentication)
         self.kadoko.tasker.addCallback('generate_graph', self.generate_debug_graph)
+        self.kadoko.tasker.addCallback('get_anime_listing', self.get_anime_listing)

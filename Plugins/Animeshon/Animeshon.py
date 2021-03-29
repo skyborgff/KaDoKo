@@ -15,6 +15,7 @@ from typing import List
 import requests_cache
 from ratelimiter import RateLimiter
 from Core.Utils.AsyncRateLimiter import AsyncRateLimiter
+from Core.Structures.Utils.db_functions import *
 
 LOGO_LIST = ["https://cdn-us.animeshon.com/brand/logo-centered-small-1080.png",
              "https://cdn-us.animeshon.com/brand/logo-no-text-2200.png",
@@ -94,8 +95,8 @@ class Animeshon(BaseMetadata):
                 namespace = namespace_dict[metaId.PluginName]
                 externalID = metaId.id
                 query = queries.queryCrossReference.format(externalID=externalID, namespace=namespace)
-                queryReply, raw = self.query(query, 'query')
                 print(f"Animeshon: Linking ids from: {metaId.PluginName} : {metaId.id}")
+                queryReply, raw = self.query(query, 'query')
                 result = queryReply.get("data")
                 if not result.get("queryCrossReference"):
                     # Todo: This may also be true if we are being rate limited!
