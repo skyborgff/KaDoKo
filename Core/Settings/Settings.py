@@ -19,15 +19,20 @@ class Settings:
     def generate_anime_settings(self):
         '''Generates the fields for the anime settings. Each anime setting has a language and a provider'''
         anime_fields = ['ageRating', 'status', 'publicRating', 'libraryStatus',
-                        'personalRating', 'id', 'names', 'images', 'tags', 'soundtracks',
-                        'voiceActings', 'crossRefs', 'description', 'type', 'videos',
-                        'episodes', 'runnings', 'season', 'studios']
+                        'personalRating', 'id', 'images', 'soundtracks', 'crossRefs',
+                        'videos', 'episodes', 'runnings', 'season', 'studios']
+        #Need language as well
+        anime_fields2 = ['names', 'sub_name', 'tags', 'voiceActings', 'description', 'type']
 
         anime_settings = {}
-        anime_setting = {'language': None,
-                         'provider': None}
+        anime_setting = {'provider': None}
+        anime_setting2 = [{'language': 'eng', 'script': 'Latn'},
+                         {'language': 'jpn', 'script': 'Latn'},
+                         {'language': 'jpn', 'script': ''}]
         for field in anime_fields:
             anime_settings[field] = anime_setting
+        for field in anime_fields2:
+            anime_settings[field] = anime_setting2
         return anime_settings
 
 

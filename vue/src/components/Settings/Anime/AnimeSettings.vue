@@ -10,7 +10,7 @@
             role="group"
             aria-label="Basic example"
           >
-            <button class="btn btn-secondary" @click="add" style="margin: 5px; margin-left: 1px">Add</button>
+            <button class="btn btn-secondary" @click="add(anime_settings.names)" style="margin: 5px; margin-left: 1px">Add</button>
             <button class="btn btn-secondary" @click="save" style="margin: 5px">Save</button>
           </div>
         </div>
@@ -24,13 +24,13 @@
               type: 'transition-group',
               name: !drag ? 'flip-list' : null
             }"
-            v-model="list"
+            v-model="anime_settings.names"
             v-bind="dragOptions"
             @start="drag = true"
             @end="drag = false"
           >
             <transition-group>
-              <div class="card text-white bg-secondary  mb-2" v-for="(element, index) in list" :key="element.language + element.script" >
+              <div class="card text-white bg-secondary  mb-2" v-for="(element, index) in anime_settings.names" :key="element.language + element.script" >
                 <div class="card-body" style="padding: 5px">
                   <table class="table align-middle table-borderless table-sm dropselect" style="margin: 0px; display: inline-block;">
                     <tbody>
@@ -38,16 +38,16 @@
                         <td rowspan='2' class="align-middle"><b-icon icon="arrows-move" class="handle align-middle"></b-icon></td>
                         <th scope="row">Language</th>
                         <td>
-                          <select class="form-select " v-model="list[index].language" aria-label="Default select example">
+                          <select class="form-select " v-model="anime_settings.names[index].language" aria-label="Default select example">
                             <option :selected="language == element.language" v-for="language in languages" :key="language" :value=language>{{language}} </option>
                           </select>
                         </td>
-                          <td rowspan='2' class="align-middle"><b-icon icon="x" class="close" @click="removeAt(index)"></b-icon></td>
+                          <td rowspan='2' class="align-middle"><b-icon icon="x" class="close" @click="removeAt(anime_settings.names, index)"></b-icon></td>
                       </tr>
                       <tr>
                         <th scope="row">Script</th>
                         <td>
-                          <select class="form-select" v-model="list[index].script" aria-label="Default select example">
+                          <select class="form-select" v-model="anime_settings.names[index].script" aria-label="Default select example">
                             <option :selected="script == element.script" v-for="script in scripts" :key="script" :value=script>{{script}}</option>
                           </select>
                         </td>
@@ -81,13 +81,13 @@
               type: 'transition-group',
               name: !drag ? 'flip-list' : null
             }"
-            v-model="list"
+            v-model="anime_settings.sub_name"
             v-bind="dragOptions"
             @start="drag = true"
             @end="drag = false"
           >
             <transition-group>
-              <div class="card text-white bg-secondary  mb-2" v-for="(element, index) in list" :key="element.language + element.script" >
+              <div class="card text-white bg-secondary  mb-2" v-for="(element, index) in anime_settings.sub_name" :key="element.language + element.script" >
                 <div class="card-body" style="padding: 5px">
                   <table class="table align-middle table-borderless table-sm dropselect" style="margin: 0px; display: inline-block;">
                     <tbody>
@@ -95,16 +95,16 @@
                         <td rowspan='2' class="align-middle"><b-icon icon="arrows-move" class="handle align-middle"></b-icon></td>
                         <th scope="row">Language</th>
                         <td>
-                          <select class="form-select " v-model="list[index].language" aria-label="Default select example">
+                          <select class="form-select " v-model="anime_settings.sub_name[index].language" aria-label="Default select example">
                             <option :selected="language == element.language" v-for="language in languages" :key="language" :value=language>{{language}} </option>
                           </select>
                         </td>
-                          <td rowspan='2' class="align-middle"><b-icon icon="x" class="close" @click="removeAt(index)"></b-icon></td>
+                          <td rowspan='2' class="align-middle"><b-icon icon="x" class="close" @click="removeAt(anime_settings.sub_name, index)"></b-icon></td>
                       </tr>
                       <tr>
                         <th scope="row">Script</th>
                         <td>
-                          <select class="form-select" v-model="list[index].script" aria-label="Default select example">
+                          <select class="form-select" v-model="anime_settings.sub_name[index].script" aria-label="Default select example">
                             <option :selected="script == element.script" v-for="script in scripts" :key="script" :value=script>{{script}}</option>
                           </select>
                         </td>
@@ -138,13 +138,13 @@
               type: 'transition-group',
               name: !drag ? 'flip-list' : null
             }"
-            v-model="list"
+            v-model="anime_settings.description"
             v-bind="dragOptions"
             @start="drag = true"
             @end="drag = false"
           >
             <transition-group>
-              <div class="card text-white bg-secondary  mb-2" v-for="(element, index) in list" :key="element.language + element.script" >
+              <div class="card text-white bg-secondary  mb-2" v-for="(element, index) in anime_settings.description" :key="element.language + element.script" >
                 <div class="card-body" style="padding: 5px">
                   <table class="table align-middle table-borderless table-sm dropselect" style="margin: 0px; display: inline-block;">
                     <tbody>
@@ -152,16 +152,16 @@
                         <td rowspan='2' class="align-middle"><b-icon icon="arrows-move" class="handle align-middle"></b-icon></td>
                         <th scope="row">Language</th>
                         <td>
-                          <select class="form-select " v-model="list[index].language" aria-label="Default select example">
+                          <select class="form-select " v-model="anime_settings.description[index].language" aria-label="Default select example">
                             <option :selected="language == element.language" v-for="language in languages" :key="language" :value=language>{{language}} </option>
                           </select>
                         </td>
-                          <td rowspan='2' class="align-middle"><b-icon icon="x" class="close" @click="removeAt(index)"></b-icon></td>
+                          <td rowspan='2' class="align-middle"><b-icon icon="x" class="close" @click="removeAt(anime_settings.description, index)"></b-icon></td>
                       </tr>
                       <tr>
                         <th scope="row">Script</th>
                         <td>
-                          <select class="form-select" v-model="list[index].script" aria-label="Default select example">
+                          <select class="form-select" v-model="anime_settings.description[index].script" aria-label="Default select example">
                             <option :selected="script == element.script" v-for="script in scripts" :key="script" :value=script>{{script}}</option>
                           </select>
                         </td>
@@ -195,13 +195,13 @@
               type: 'transition-group',
               name: !drag ? 'flip-list' : null
             }"
-            v-model="list"
+            v-model="anime_settings.voiceActings"
             v-bind="dragOptions"
             @start="drag = true"
             @end="drag = false"
           >
             <transition-group>
-              <div class="card text-white bg-secondary  mb-2" v-for="(element, index) in list" :key="element.language + element.script" >
+              <div class="card text-white bg-secondary  mb-2" v-for="(element, index) in anime_settings.voiceActings" :key="element.language + element.script" >
                 <div class="card-body" style="padding: 5px">
                   <table class="table align-middle table-borderless table-sm dropselect" style="margin: 0px; display: inline-block;">
                     <tbody>
@@ -209,16 +209,16 @@
                         <td rowspan='2' class="align-middle"><b-icon icon="arrows-move" class="handle align-middle"></b-icon></td>
                         <th scope="row">Language</th>
                         <td>
-                          <select class="form-select " v-model="list[index].language" aria-label="Default select example">
+                          <select class="form-select " v-model="anime_settings.voiceActings[index].language" aria-label="Default select example">
                             <option :selected="language == element.language" v-for="language in languages" :key="language" :value=language>{{language}} </option>
                           </select>
                         </td>
-                          <td rowspan='2' class="align-middle"><b-icon icon="x" class="close" @click="removeAt(index)"></b-icon></td>
+                          <td rowspan='2' class="align-middle"><b-icon icon="x" class="close" @click="removeAt(anime_settings.voiceActings, index)"></b-icon></td>
                       </tr>
                       <tr>
                         <th scope="row">Script</th>
                         <td>
-                          <select class="form-select" v-model="list[index].script" aria-label="Default select example">
+                          <select class="form-select" v-model="anime_settings.voiceActings[index].script" aria-label="Default select example">
                             <option :selected="script == element.script" v-for="script in scripts" :key="script" :value=script>{{script}}</option>
                           </select>
                         </td>
@@ -245,7 +245,7 @@
 
 <script>
   import draggable from 'vuedraggable'
-  let id = 1;
+  import axios from 'axios';
   export default {
     name: "AnimeSettings",
     components: {
@@ -253,11 +253,7 @@
     },
     data() {
       return {
-        list: [
-          { language: "eng", script: "Latn" },
-          { language: "jpn", script: "Latn" },
-          { language: "jpn", script: "Jpan" },
-        ],
+        anime_settings: {},
         languages: ["afr", "ara", "bul", "cat", "ces", "dan", "deu", "ell", "eng",
           "epo", "est", "fas", "fin", "fra", "glg", "heb", "hin", "hrv", "hun", "ind",
           "isl", "ita", "jpn", "kor", "lav", "lit", "mis", "mon", "msa", "mya", "nan",
@@ -268,29 +264,34 @@
         drag: false
       };
     },
+    mounted: function() {
+      this.get_anime_settings();
+    },
     methods: {
-      add: function() {
-        for (const index in this.list){
-          if (this.list[index].language == "none" &&  this.list[index].script == ""){
-            this.list.splice(index, 1)
+      get_anime_settings() {
+        const path = 'http://localhost:8283/get_anime_settings';
+        axios.get(path).then((res) => {
+            this.anime_settings = res.data;
+          });
+      },
+      save_anime_settings() {
+        const path = 'http://localhost:8283/save_anime_settings';
+        axios.post(path, this.anime_settings)
+      },
+      add: function(list) {
+        for (const index in list){
+          if (list[index].language == "none" &&  list[index].script == ""){
+            list.splice(index, 1)
             break
           }
         }
-          this.list.unshift({ language: "none", script: "" });
+          list.unshift({ language: "none", script: "" });
       },
-      replace: function() {
-        this.list = [{ name: "Edgard", id: id++ }];
+      removeAt(list, idx) {
+      list.splice(idx, 1);
       },
-      removeAt(idx) {
-      this.list.splice(idx, 1);
-      },
-      save(idx) {
-      this.list.splice(idx, 1);
-      },
-      clone: function(el) {
-        return {
-          name: el.name + " cloned"
-        };
+      save() {
+      this.save_anime_settings()
       },
     },
     computed: {

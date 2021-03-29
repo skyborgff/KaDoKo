@@ -54,6 +54,19 @@ class FlaskAPI:
             response_object['message'] = 'Settings Received'
             return jsonify(response_object)
 
+        @self.app.route('/get_anime_settings', methods=['GET'])
+        def get_anime_settings():
+            info = self.tasker.addWaitReply('get_anime_settings', TaskImportance.UI, TaskType.SYNC)
+            return jsonify(info)
+
+        @self.app.route('/save_anime_settings', methods=['POST'])
+        def save_anime_settings():
+            response_object = {'status': 'success'}
+            post_data = request.get_json()
+            self.tasker.addWaitReply('save_anime_settings', TaskImportance.UI, TaskType.SYNC, [post_data])
+            response_object['message'] = 'Settings Received'
+            return jsonify(response_object)
+
         @self.app.route('/get_authentication_needed', methods=['GET'])
         def get_authentication_needed():
             # info = self.kadoko.ui.get_authentication_needed()
