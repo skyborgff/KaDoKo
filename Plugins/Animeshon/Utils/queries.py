@@ -87,8 +87,7 @@ getAnime = '''
         names{{
           text
           localization{{
-            language{{alpha2}}
-            script{{code}}
+            tag
           }}
         }}
       }}
@@ -102,15 +101,13 @@ getAnime = '''
       names{{
         text
         localization{{
-          language{{alpha2}}
-          script{{code}}
+          tag
         }}
       }}
     }}
     isPrimary
     localization{{
-      language{{alpha2}}
-      script{{code}}
+      tag
     }}
   }}
   staff{{
@@ -125,8 +122,7 @@ getAnime = '''
         names{{
           text
           localization{{
-            language{{alpha2}}
-            script{{code}}
+            tag
           }}
         }}
       }}
@@ -137,8 +133,7 @@ getAnime = '''
         names{{
           text
             localization{{
-            language{{alpha2}}
-            script{{code}}
+            tag
           }}
         }}
       }}
@@ -146,8 +141,7 @@ getAnime = '''
           names{{
           text
             localization{{
-            language{{alpha2}}
-            script{{code}}
+            tag
           }}
         }}
       }}
@@ -174,8 +168,7 @@ getAnime = '''
       names{{
         text
         localization{{
-          language{{alpha2}}
-          script{{code}}
+          tag
         }}
       }}
     }}
@@ -183,15 +176,13 @@ getAnime = '''
   names{{
     text
     localization{{
-      language{{alpha2}}
-      script{{code}}
+      tag
     }}
   }}
   descriptions{{
     text
     localization{{
-      language{{alpha2}}
-      script{{code}}
+      tag
     }}
   }}
   images{{
@@ -231,8 +222,7 @@ getAnime = '''
     names{{
       text
       localization{{
-        language{{alpha2}}
-        script{{code}}
+        tag
       }}
     }}
     ageRatings{{

@@ -9,8 +9,8 @@ import Core.Structures.Other.Person as PersonStruct
 DefaultCountry = pycountry.countries.get(name='Japan').name
 DefaultLanguage = pycountry.languages.get(name='Japanese').name
 DefaultScript = pycountry.scripts.get(name='Latin').name
-DefaultLocalization = GenericStruct.Localization(Language=DefaultLanguage,
-                                                 Script=DefaultScript)
+DefaultTag = 'jpn-Latn'
+DefaultLocalization = GenericStruct.Localization(Tag=DefaultTag)
 
 
 def AnimeMetadata(metadata, oldAnime: AnimeStruct.Anime) -> AnimeStruct.Anime:
@@ -42,16 +42,10 @@ def AnimeMetadata(metadata, oldAnime: AnimeStruct.Anime) -> AnimeStruct.Anime:
     runningsList: List[dict] = metadata.get("runnings")
 
     def localizationMetadata(localization: dict):
-        language = None
-        script = None
-        if localization.get('language'):
-            language = localization.get('language').get('alpha2')
-        if localization.get('script'):
-            script = localization.get('script').get('code')
-            script = pycountry.scripts.get(alpha_4=script).name
-        if language:
-            language = pycountry.languages.get(alpha_2=language).name
-        return GenericStruct.Localization(language, script)
+        tag = None
+        if localization.get('tag'):
+            tag = localization.get('tag')
+        return GenericStruct.Localization(tag)
 
     def namesMetadata(namesList: List[dict]):
         names = AnimeStruct.Names()

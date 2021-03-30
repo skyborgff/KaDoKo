@@ -8,8 +8,8 @@ import Core.Structures.Generic as GenericStruct
 DefaultCountry = pycountry.countries.get(name='Japan').name
 DefaultLanguage = pycountry.languages.get(name='Japanese').name
 DefaultScript = pycountry.scripts.get(name='Latin').name
-DefaultLocalization = GenericStruct.Localization(Language=DefaultLanguage,
-                                                 Script=DefaultScript)
+DefaultTag = 'jpn-Latn'
+DefaultLocalization = GenericStruct.Localization(Tag=DefaultTag)
 
 def AnimeList(List: list):
     AnimeLists = AnimeListsStruct.AnimeLists()
