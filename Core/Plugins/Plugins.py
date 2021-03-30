@@ -96,7 +96,7 @@ class Plugins:
         for plugin in self.list:
             if plugin.name == name:
                 return plugin
-        raise ModuleNotFoundError
+        raise ModuleNotFoundError(name)
 
     def meta_flagged(self, flag: Flags.MetadataFlag)-> List[BaseMetadata]:
         '''returns a list of plugins with specific metadata flags'''

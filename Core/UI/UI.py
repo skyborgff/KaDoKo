@@ -1,5 +1,6 @@
 import webbrowser
 from Core.Structures.Anime import Anime
+from Core.UI.Utils.LanguageFilter import LanguageFilter
 
 class UI:
     def __init__(self, kadoko):
@@ -35,6 +36,13 @@ class UI:
         self.kadoko.settings.optional_dbs = settings.get('optional_dbs')
         self.kadoko.settings.save()
 
+    def get_anime_settings(self):
+        return self.kadoko.settings.anime
+
+    def save_anime_settings(self, settings: dict):
+        self.kadoko.settings.anime = settings
+        self.kadoko.settings.save()
+
     def get_authentication_needed(self)-> dict:
         return self.kadoko.plugins.get_authentication_needed()
 
@@ -58,10 +66,15 @@ class UI:
                 logo_url = anime.images.list[0].url
             title = ''
             subtitle = ''
+            settings = self.kadoko.settings
             if anime.names.list:
-                title = anime.names.list[0].Text
-                if len(anime.names.list)>1:
-                    subtitle = anime.names.list[1].Text
+                title = LanguageFilter(settings.anime['names'], anime.names.list)[0]
+                sub_list = LanguageFilter(settings.anime['sub_name'], anime.names.list)
+                subtitle = sub_list[0]
+                for sub in sub_list:
+                    if sub != title:
+                        subtitle = sub
+                        break
             listing_anime = {'logo_url': logo_url,
                              'title': title,
                              'subtitle': subtitle,
@@ -82,3 +95,5 @@ class UI:
         self.kadoko.tasker.addCallback('set_authentication', self.set_authentication)
         self.kadoko.tasker.addCallback('generate_graph', self.generate_debug_graph)
         self.kadoko.tasker.addCallback('get_anime_listing', self.get_anime_listing)
+        self.kadoko.tasker.addCallback('get_anime_settings', self.get_anime_settings)
+        self.kadoko.tasker.addCallback('save_anime_settings', self.save_anime_settings)

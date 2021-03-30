@@ -79,11 +79,10 @@ class MetaIDs(Hashed):
 
 @dataclass
 class Localization(Hashed):
-    Language: str = "Unknown"
-    Script: str = "Unknown"
+    Tag: str = ''
 
     def hashSeed(self):
-        return f"{self.Language}{self.Script}"
+        return f"{self.Tag}"
 
 
 @dataclass
@@ -92,7 +91,7 @@ class Text(Hashed):
     Localization: Localization = None
 
     def to_db(self, database: Database):
-        return database.add_node(self, label=f"{self.Localization.Language}: {self.Text}", raw=True)
+        return database.add_node(self, label=f"{self.Localization.Tag}: {self.Text}", raw=True)
 
     @staticmethod
     def from_db(hash, database: Database):

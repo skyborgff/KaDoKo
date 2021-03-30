@@ -14,8 +14,6 @@ class Settings:
         self.anime = self.generate_anime_settings()
         self.load()
 
-        # Note To Self: I was going to create settings UI
-
     def generate_anime_settings(self):
         '''Generates the fields for the anime settings. Each anime setting has a language and a provider'''
         anime_fields = ['ageRating', 'status', 'publicRating', 'libraryStatus',
@@ -26,9 +24,7 @@ class Settings:
 
         anime_settings = {}
         anime_setting = {'provider': None}
-        anime_setting2 = [{'language': 'eng', 'script': 'Latn'},
-                         {'language': 'jpn', 'script': 'Latn'},
-                         {'language': 'jpn', 'script': ''}]
+        anime_setting2 = [{'tag': 'eng'}, {'tag': 'jpn-Latn'}, {'tag': 'jpn'}]
         for field in anime_fields:
             anime_settings[field] = anime_setting
         for field in anime_fields2:

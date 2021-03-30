@@ -30,7 +30,7 @@
             @end="drag = false"
           >
             <transition-group>
-              <div class="card text-white bg-secondary  mb-2" v-for="(element, index) in anime_settings.names" :key="element.language + element.script" >
+              <div class="card text-white bg-secondary  mb-2" v-for="(element, index) in anime_settings.names" :key="element.tag" >
                 <div class="card-body" style="padding: 5px">
                   <table class="table align-middle table-borderless table-sm dropselect" style="margin: 0px; display: inline-block;">
                     <tbody>
@@ -38,19 +38,11 @@
                         <td rowspan='2' class="align-middle"><b-icon icon="arrows-move" class="handle align-middle"></b-icon></td>
                         <th scope="row">Language</th>
                         <td>
-                          <select class="form-select " v-model="anime_settings.names[index].language" aria-label="Default select example">
-                            <option :selected="language == element.language" v-for="language in languages" :key="language" :value=language>{{language}} </option>
+                          <select class="form-select " v-model="anime_settings.names[index].tag" aria-label="Default select example">
+                            <option :selected="tag == element.tag" v-for="tag in tags" :key="tag" :value=tag>{{tag}} </option>
                           </select>
                         </td>
                           <td rowspan='2' class="align-middle"><b-icon icon="x" class="close" @click="removeAt(anime_settings.names, index)"></b-icon></td>
-                      </tr>
-                      <tr>
-                        <th scope="row">Script</th>
-                        <td>
-                          <select class="form-select" v-model="anime_settings.names[index].script" aria-label="Default select example">
-                            <option :selected="script == element.script" v-for="script in scripts" :key="script" :value=script>{{script}}</option>
-                          </select>
-                        </td>
                       </tr>
                     </tbody>
                   </table>
@@ -87,27 +79,19 @@
             @end="drag = false"
           >
             <transition-group>
-              <div class="card text-white bg-secondary  mb-2" v-for="(element, index) in anime_settings.sub_name" :key="element.language + element.script" >
+              <div class="card text-white bg-secondary  mb-2" v-for="(element, index) in anime_settings.sub_name" :key="element.tag" >
                 <div class="card-body" style="padding: 5px">
                   <table class="table align-middle table-borderless table-sm dropselect" style="margin: 0px; display: inline-block;">
                     <tbody>
                       <tr>
                         <td rowspan='2' class="align-middle"><b-icon icon="arrows-move" class="handle align-middle"></b-icon></td>
-                        <th scope="row">Language</th>
+                        <th scope="row">tag</th>
                         <td>
-                          <select class="form-select " v-model="anime_settings.sub_name[index].language" aria-label="Default select example">
-                            <option :selected="language == element.language" v-for="language in languages" :key="language" :value=language>{{language}} </option>
+                          <select class="form-select " v-model="anime_settings.sub_name[index].tag" aria-label="Default select example">
+                            <option :selected="tag == element.tag" v-for="tag in tags" :key="tag" :value=tag>{{tag}} </option>
                           </select>
                         </td>
                           <td rowspan='2' class="align-middle"><b-icon icon="x" class="close" @click="removeAt(anime_settings.sub_name, index)"></b-icon></td>
-                      </tr>
-                      <tr>
-                        <th scope="row">Script</th>
-                        <td>
-                          <select class="form-select" v-model="anime_settings.sub_name[index].script" aria-label="Default select example">
-                            <option :selected="script == element.script" v-for="script in scripts" :key="script" :value=script>{{script}}</option>
-                          </select>
-                        </td>
                       </tr>
                     </tbody>
                   </table>
@@ -144,27 +128,19 @@
             @end="drag = false"
           >
             <transition-group>
-              <div class="card text-white bg-secondary  mb-2" v-for="(element, index) in anime_settings.description" :key="element.language + element.script" >
+              <div class="card text-white bg-secondary  mb-2" v-for="(element, index) in anime_settings.description" :key="element.tag" >
                 <div class="card-body" style="padding: 5px">
                   <table class="table align-middle table-borderless table-sm dropselect" style="margin: 0px; display: inline-block;">
                     <tbody>
                       <tr>
                         <td rowspan='2' class="align-middle"><b-icon icon="arrows-move" class="handle align-middle"></b-icon></td>
-                        <th scope="row">Language</th>
+                        <th scope="row">tag</th>
                         <td>
-                          <select class="form-select " v-model="anime_settings.description[index].language" aria-label="Default select example">
-                            <option :selected="language == element.language" v-for="language in languages" :key="language" :value=language>{{language}} </option>
+                          <select class="form-select " v-model="anime_settings.description[index].tag" aria-label="Default select example">
+                            <option :selected="tag == element.tag" v-for="tag in tags" :key="tag" :value=tag>{{tag}} </option>
                           </select>
                         </td>
                           <td rowspan='2' class="align-middle"><b-icon icon="x" class="close" @click="removeAt(anime_settings.description, index)"></b-icon></td>
-                      </tr>
-                      <tr>
-                        <th scope="row">Script</th>
-                        <td>
-                          <select class="form-select" v-model="anime_settings.description[index].script" aria-label="Default select example">
-                            <option :selected="script == element.script" v-for="script in scripts" :key="script" :value=script>{{script}}</option>
-                          </select>
-                        </td>
                       </tr>
                     </tbody>
                   </table>
@@ -201,27 +177,19 @@
             @end="drag = false"
           >
             <transition-group>
-              <div class="card text-white bg-secondary  mb-2" v-for="(element, index) in anime_settings.voiceActings" :key="element.language + element.script" >
+              <div class="card text-white bg-secondary  mb-2" v-for="(element, index) in anime_settings.voiceActings" :key="element.tag" >
                 <div class="card-body" style="padding: 5px">
                   <table class="table align-middle table-borderless table-sm dropselect" style="margin: 0px; display: inline-block;">
                     <tbody>
                       <tr>
                         <td rowspan='2' class="align-middle"><b-icon icon="arrows-move" class="handle align-middle"></b-icon></td>
-                        <th scope="row">Language</th>
+                        <th scope="row">tag</th>
                         <td>
-                          <select class="form-select " v-model="anime_settings.voiceActings[index].language" aria-label="Default select example">
-                            <option :selected="language == element.language" v-for="language in languages" :key="language" :value=language>{{language}} </option>
+                          <select class="form-select " v-model="anime_settings.voiceActings[index].tag" aria-label="Default select example">
+                            <option :selected="tag == element.tag" v-for="tag in tags" :key="tag" :value=tag>{{tag}} </option>
                           </select>
                         </td>
                           <td rowspan='2' class="align-middle"><b-icon icon="x" class="close" @click="removeAt(anime_settings.voiceActings, index)"></b-icon></td>
-                      </tr>
-                      <tr>
-                        <th scope="row">Script</th>
-                        <td>
-                          <select class="form-select" v-model="anime_settings.voiceActings[index].script" aria-label="Default select example">
-                            <option :selected="script == element.script" v-for="script in scripts" :key="script" :value=script>{{script}}</option>
-                          </select>
-                        </td>
                       </tr>
                     </tbody>
                   </table>
@@ -254,13 +222,14 @@
     data() {
       return {
         anime_settings: {},
-        languages: ["afr", "ara", "bul", "cat", "ces", "dan", "deu", "ell", "eng",
-          "epo", "est", "fas", "fin", "fra", "glg", "heb", "hin", "hrv", "hun", "ind",
-          "isl", "ita", "jpn", "kor", "lav", "lit", "mis", "mon", "msa", "mya", "nan",
-          "nld", "nor", "oav", "pol", "por", "prc", "ron", "rus", "slk", "slv", "spa",
-          "srp", "swe", "tam", "tgl", "tha", "tur", "ukr", "und", "urd", "vie", "yue",
-          "zho",  "none"],
-        scripts: ["Latn", "Hant", "Hans", "TWN", "HKG", "BRA", "SGP", ""],
+        tags: ["afr", "ara", "bul", "cat", "ces", "dan", "deu", "ell",
+          "eng", "epo", "est", "fas", "fin", "fra", "glg", "heb", "hin",
+          "hrv", "hun", "ind", "isl", "ita", "jpn-Latn", "jpn", "kor-Latn",
+          "kor", "lav", "lit", "mis", "mon", "msa-SGP", "mya", "nan",
+          "nld", "nor", "oav", "pol", "por-BRA", "por", "prc", "ron",
+          "rus", "slk", "slv", "spa", "srp", "swe", "tam", "tgl", "tha",
+          "tur", "ukr", "und", "urd", "vie", "yue", "zho-Hans", "zho-Hant",
+          "zho-HKG", "zho-Latn", "zho-TWN", "zho"],
         drag: false
       };
     },
@@ -280,12 +249,12 @@
       },
       add: function(list) {
         for (const index in list){
-          if (list[index].language == "none" &&  list[index].script == ""){
+          if (list[index].tag == "none" &&  list[index].script == ""){
             list.splice(index, 1)
             break
           }
         }
-          list.unshift({ language: "none", script: "" });
+          list.unshift({ tag: "none", script: "" });
       },
       removeAt(list, idx) {
       list.splice(idx, 1);
